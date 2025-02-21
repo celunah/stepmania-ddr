@@ -31,6 +31,7 @@ public:
 	virtual bool IsFailing() const;
 	virtual float GetLife() const { return m_fLifePercentage; }
 	virtual double CalculatePenalty(int X);
+	virtual int GetScore(TapNoteScore TNS, HoldNoteScore HNS);
 
 	void UpdateNonstopLifebar();
 	// this function is solely for HowToPlay
@@ -40,6 +41,7 @@ public:
 	int 		currFloatingFlareIndex = 9;
 
 	vector<double> recentMultipliers;
+	vector<pair<HoldNoteScore, TapNoteScore>> allJudgments;
 
 	void ResetPerformanceAdjustments() {
 		recentMultipliers.clear();
@@ -81,6 +83,8 @@ private:
 	/** @brief The combo needed before the life bar starts to fill up after a Player failed. */
 	int			m_iComboToRegainLife;
 
+	/** @brief Target scores for Flare levels */
+	int FlareTargets[10] = { 920000, 930000, 940000, 950000, 955000, 960000, 970000, 980000, 990000, 995000 };
     /** @brief Penalty values for Marvelous judgments */
 	float 		FlareJudgmentsW1[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	/** @brief Penalty values for Perfect judgments */

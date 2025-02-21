@@ -25,49 +25,125 @@ static RString LIFE_PERCENT_CHANGE_NAME( size_t i )   { return "LifePercentChang
 // @brief DDR life penalty scalar function
 double LifeMeterBar::CalculatePenalty(int X) {
 	constexpr int beginnerComboThreshold = 8;       // How many misses before the penalties are increased?
-	constexpr double beginnerLow = 0.2;              // Lowest lenient penalty multiplier
-	constexpr double beginnerHigh = 1.0;             // Highest lenient penalty multiplier
-	constexpr double maxMultiplier = 1.8;            // Highest penalty multiplier
-	constexpr int consistentPenaltyMultiplier = 3.0; // Consistent performance penalty multiplier
+	constexpr double beginnerLow = 0.2;            // Lowest lenient penalty multiplier
+	constexpr double beginnerHigh = 1.0;           // Highest lenient penalty multiplier
+	constexpr double maxMultiplier = 1.8;          // Highest penalty multiplier
+	constexpr size_t maxRecentMultipliers = 10;    // Store last 10 multipliers to assess performance
 
 	// Calculate on at least 1 comboed note
 	if (X <= 0) {
 		X = 1;
 	}
 
-	// Declare overrideable values
+	// Calculate average recent performance
+	double averagePenalty = 0.0;
+	if (!recentMultipliers.empty()) {
+		averagePenalty = std::accumulate(recentMultipliers.begin(), recentMultipliers.end(), 0.0) / recentMultipliers.size();
+	}
+
+	// Remove the performance snapping logic that was causing the issues
+	// Instead, use a weighted approach based on recent performance
+	double performanceMultiplier = 1.0;
+	if (averagePenalty > 0) {
+		// If recent performance is good (high average), increase penalty for breaking combo
+		if (averagePenalty >= 1.0) {
+			performanceMultiplier = 1.0 + (averagePenalty - 1.0) * 0.5; // Gradually increase penalty
+		}
+		// If recent performance is poor, slightly reduce penalty to give player a chance
+		else {
+			performanceMultiplier = 0.8 + averagePenalty * 0.2; // Scales from 0.8 to 1.0
+		}
+	}
+
 	double ret;
-	double averagePenalty;
-
-	// Determine player performance for scaling
-	if (recentMultipliers.size() > 0) { // Don't divide by 0
-		averagePenalty = accumulate(recentMultipliers.begin(), recentMultipliers.end(), 0.0) / recentMultipliers.size();
-	}
-	else {
-		averagePenalty = 0;
-	}
-
-	// Snap current combo to keep a consistent difficulty
-	if (averagePenalty < 0.5 && averagePenalty != 0) {
-		X = abs(beginnerComboThreshold / consistentPenaltyMultiplier) + 1; // Consistent bad performance
-	}
-	else if (averagePenalty >= 1 && averagePenalty != 0) {
-		X = abs(beginnerComboThreshold * consistentPenaltyMultiplier) + 1; // Consistent good performance
-	}
-
 	// Player is not keeping a combo
 	if (X <= beginnerComboThreshold) {
-		ret = beginnerLow + (beginnerHigh - beginnerLow) * (static_cast<double>(X) / beginnerComboThreshold);
+		ret = (beginnerLow + (beginnerHigh - beginnerLow) *
+			(static_cast<double>(X) / beginnerComboThreshold)) * performanceMultiplier;
 	}
 	// Player is doing well
 	else {
-		double scaledX = static_cast<double>(X - beginnerComboThreshold) / (maxMultiplier - beginnerHigh);
-		ret = beginnerHigh + (maxMultiplier - beginnerHigh) * std::min(scaledX, 1.0); // Don't make life difficulty absurd
+		double scaledX = static_cast<double>(X - beginnerComboThreshold) / (50.0); // Gradual scaling over 50 notes
+		ret = (beginnerHigh + (maxMultiplier - beginnerHigh) *
+			std::min(scaledX, 1.0)) * performanceMultiplier;
 	}
 
-	// Ensure performance can be determined on consecutive calls
+	// Maintain recent history
 	recentMultipliers.push_back(ret);
+	if (recentMultipliers.size() > maxRecentMultipliers) {
+		recentMultipliers.erase(recentMultipliers.begin());
+	}
+
 	return ret;
+}
+
+int LifeMeterBar::GetScore(TapNoteScore TNS = TNS_None, HoldNoteScore HNS = HNS_None) {
+	// Early return should return a value
+	if (TNS == TNS_None && HNS == HNS_None)
+		return 0;
+
+	// Define score values
+	constexpr int W1_Points = 1000000;
+	constexpr int W2_Points = 999990;
+	constexpr int W3_Points = 599990;
+	constexpr int W4_Points = 199990;
+
+	// Store judgment only if there's actually a judgment
+	if (TNS != TNS_None || HNS != HNS_None) {
+		allJudgments.push_back(std::make_pair(HNS, TNS));
+	}
+
+	if (allJudgments.size() == 0)
+		return 0; // Prevent division by zero
+
+	// Calculate total score
+	int totalScore = 0;
+
+	// Process all stored judgments instead of just the current one
+	for (const auto& judgment : allJudgments) {
+		HoldNoteScore currHNS = judgment.first;
+		TapNoteScore currTNS = judgment.second;
+
+		// Process tap note scores
+		switch (currTNS) {
+		case TNS_W1:
+			totalScore += W1_Points;
+			break;
+		case TNS_W2:
+			totalScore += W2_Points;
+			break;
+		case TNS_W3:
+			totalScore += W3_Points;
+			break;
+		case TNS_W4:
+			totalScore += W4_Points;
+			break;
+		case TNS_AvoidMine:
+			totalScore += W1_Points;
+			break;
+		case TNS_HitMine:
+			totalScore += 0;
+			break;
+		default:
+			break;
+		}
+
+		// Process hold note scores
+		switch (currHNS) {
+		case HNS_Held:
+			totalScore += W1_Points;
+			break;
+		case HNS_LetGo:
+			totalScore += 0;
+			break;
+		default:
+			break;
+		}
+	}
+
+	// Normalize to max score of 1,000,000 and round to nearest 10
+	int rawScore = totalScore / allJudgments.size();
+	return std::round(rawScore / 10.0) * 10;
 }
 
 LifeMeterBar::LifeMeterBar( PlayerNumber pn )
@@ -128,6 +204,9 @@ LifeMeterBar::LifeMeterBar( PlayerNumber pn )
 	m_sprOver->SetName( "Over" );
 	ActorUtil::LoadAllCommandsAndSetXY( m_sprOver, sType );
 	this->AddChild( m_sprOver );
+
+	// The score needs to return to 0 points upon starting a new stage.
+	allJudgments.clear();
 }
 
 LifeMeterBar::~LifeMeterBar()
@@ -198,7 +277,8 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 		case TNS_W3:		fDeltaLife = m_fLifePercentChange.GetValue(SE_W3);	break;
 		case TNS_W4:		fDeltaLife = m_fLifePercentChange.GetValue(SE_W4);	break;
 		case TNS_Miss:		fDeltaLife = m_fLifePercentChange.GetValue(SE_Miss);	break;
-		case TNS_HitMine:	fDeltaLife = m_fLifePercentChange.GetValue(SE_HitMine);	break;
+		case TNS_AvoidMine: fDeltaLife = m_fLifePercentChange.GetValue(SE_W1);		break;
+		case TNS_HitMine:	fDeltaLife = m_fLifePercentChange.GetValue(SE_Miss);	break;
 		case TNS_None:		fDeltaLife = m_fLifePercentChange.GetValue(SE_Miss);	break;
 		case TNS_CheckpointHit:	fDeltaLife = m_fLifePercentChange.GetValue(SE_CheckpointHit);	break;
 		case TNS_CheckpointMiss:fDeltaLife = m_fLifePercentChange.GetValue(SE_CheckpointMiss);	break;
@@ -208,7 +288,7 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 			m_iCombo += 1;
 			m_iMissCombo = 0;
 			if (m_iCombo > 10)
-				double _ = CalculatePenalty(min(m_iCombo, 30));  // XXX: unused when called with TNS_W4 or better, but allows the vector to grow
+				CalculatePenalty(min(m_iCombo, 30));  // XXX: unused when called with TNS_W4 or better, but allows the vector to grow
 		}
 		else {
 			if (m_iCombo <= 8) {
@@ -234,7 +314,8 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 		case TNS_W3:		fDeltaLife = m_fLifePercentChange.GetValue(SE_W3);	break;
 		case TNS_W4:		fDeltaLife = m_fLifePercentChange.GetValue(SE_W4);	break;
 		case TNS_Miss:		fDeltaLife = m_fLifePercentChange.GetValue(SE_Miss);	break;
-		case TNS_HitMine:	fDeltaLife = m_fLifePercentChange.GetValue(SE_HitMine);	break;
+		case TNS_AvoidMine: fDeltaLife = m_fLifePercentChange.GetValue(SE_W1);		break;
+		case TNS_HitMine:	fDeltaLife = m_fLifePercentChange.GetValue(SE_Miss);	break;
 		case TNS_None:		fDeltaLife = m_fLifePercentChange.GetValue(SE_Miss);	break;
 		case TNS_CheckpointHit:	fDeltaLife = m_fLifePercentChange.GetValue(SE_CheckpointHit);	break;
 		case TNS_CheckpointMiss:fDeltaLife = m_fLifePercentChange.GetValue(SE_CheckpointMiss);	break;
@@ -259,6 +340,7 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 		case TNS_W3: fDeltaLife = FlareJudgmentsW3[0]; break;
 		case TNS_W4: fDeltaLife = FlareJudgmentsW4[0]; break;
 		case TNS_Miss: fDeltaLife = FlareJudgmentsMiss[0]; break;
+		case TNS_AvoidMine: fDeltaLife = FlareJudgmentsW1[0]; break;
 		case TNS_HitMine: fDeltaLife = FlareJudgmentsMiss[0]; break;
 		case TNS_None: fDeltaLife = FlareJudgmentsW1[0]; break;
 		case TNS_CheckpointHit: fDeltaLife = FlareJudgmentsW1[0]; break;
@@ -274,6 +356,7 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 		case TNS_W3: fDeltaLife = FlareJudgmentsW3[1]; break;
 		case TNS_W4: fDeltaLife = FlareJudgmentsW4[1]; break;
 		case TNS_Miss: fDeltaLife = FlareJudgmentsMiss[1]; break;
+		case TNS_AvoidMine: fDeltaLife = FlareJudgmentsW1[1]; break;
 		case TNS_HitMine: fDeltaLife = FlareJudgmentsMiss[1]; break;
 		case TNS_None: fDeltaLife = FlareJudgmentsW1[1]; break;
 		case TNS_CheckpointHit: fDeltaLife = FlareJudgmentsW1[1]; break;
@@ -289,6 +372,7 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 		case TNS_W3: fDeltaLife = FlareJudgmentsW3[2]; break;
 		case TNS_W4: fDeltaLife = FlareJudgmentsW4[2]; break;
 		case TNS_Miss: fDeltaLife = FlareJudgmentsMiss[2]; break;
+		case TNS_AvoidMine: fDeltaLife = FlareJudgmentsW1[2]; break;
 		case TNS_HitMine: fDeltaLife = FlareJudgmentsMiss[2]; break;
 		case TNS_None: fDeltaLife = FlareJudgmentsW1[2]; break;
 		case TNS_CheckpointHit: fDeltaLife = FlareJudgmentsW1[2]; break;
@@ -304,6 +388,7 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 		case TNS_W3: fDeltaLife = FlareJudgmentsW3[3]; break;
 		case TNS_W4: fDeltaLife = FlareJudgmentsW4[3]; break;
 		case TNS_Miss: fDeltaLife = FlareJudgmentsMiss[3]; break;
+		case TNS_AvoidMine: fDeltaLife = FlareJudgmentsW1[3]; break;
 		case TNS_HitMine: fDeltaLife = FlareJudgmentsMiss[3]; break;
 		case TNS_None: fDeltaLife = FlareJudgmentsW1[3]; break;
 		case TNS_CheckpointHit: fDeltaLife = FlareJudgmentsW1[3]; break;
@@ -319,6 +404,7 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 		case TNS_W3: fDeltaLife = FlareJudgmentsW3[4]; break;
 		case TNS_W4: fDeltaLife = FlareJudgmentsW4[4]; break;
 		case TNS_Miss: fDeltaLife = FlareJudgmentsMiss[4]; break;
+		case TNS_AvoidMine: fDeltaLife = FlareJudgmentsW1[4]; break;
 		case TNS_HitMine: fDeltaLife = FlareJudgmentsMiss[4]; break;
 		case TNS_None: fDeltaLife = FlareJudgmentsW1[4]; break;
 		case TNS_CheckpointHit: fDeltaLife = FlareJudgmentsW1[4]; break;
@@ -334,6 +420,7 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 		case TNS_W3: fDeltaLife = FlareJudgmentsW3[5]; break;
 		case TNS_W4: fDeltaLife = FlareJudgmentsW4[5]; break;
 		case TNS_Miss: fDeltaLife = FlareJudgmentsMiss[5]; break;
+		case TNS_AvoidMine: fDeltaLife = FlareJudgmentsW1[5]; break;
 		case TNS_HitMine: fDeltaLife = FlareJudgmentsMiss[5]; break;
 		case TNS_None: fDeltaLife = FlareJudgmentsW1[5]; break;
 		case TNS_CheckpointHit: fDeltaLife = FlareJudgmentsW1[5]; break;
@@ -349,6 +436,7 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 		case TNS_W3: fDeltaLife = FlareJudgmentsW3[6]; break;
 		case TNS_W4: fDeltaLife = FlareJudgmentsW4[6]; break;
 		case TNS_Miss: fDeltaLife = FlareJudgmentsMiss[6]; break;
+		case TNS_AvoidMine: fDeltaLife = FlareJudgmentsW1[6]; break;
 		case TNS_HitMine: fDeltaLife = FlareJudgmentsMiss[6]; break;
 		case TNS_None: fDeltaLife = FlareJudgmentsW1[6]; break;
 		case TNS_CheckpointHit: fDeltaLife = FlareJudgmentsW1[6]; break;
@@ -364,6 +452,7 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 		case TNS_W3: fDeltaLife = FlareJudgmentsW3[7]; break;
 		case TNS_W4: fDeltaLife = FlareJudgmentsW4[7]; break;
 		case TNS_Miss: fDeltaLife = FlareJudgmentsMiss[7]; break;
+		case TNS_AvoidMine: fDeltaLife = FlareJudgmentsW1[7]; break;
 		case TNS_HitMine: fDeltaLife = FlareJudgmentsMiss[7]; break;
 		case TNS_None: fDeltaLife = FlareJudgmentsW1[7]; break;
 		case TNS_CheckpointHit: fDeltaLife = FlareJudgmentsW1[7]; break;
@@ -379,6 +468,7 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 		case TNS_W3: fDeltaLife = FlareJudgmentsW3[8]; break;
 		case TNS_W4: fDeltaLife = FlareJudgmentsW4[8]; break;
 		case TNS_Miss: fDeltaLife = FlareJudgmentsMiss[8]; break;
+		case TNS_AvoidMine: fDeltaLife = FlareJudgmentsW1[8]; break;
 		case TNS_HitMine: fDeltaLife = FlareJudgmentsMiss[8]; break;
 		case TNS_None: fDeltaLife = FlareJudgmentsW1[8]; break;
 		case TNS_CheckpointHit: fDeltaLife = FlareJudgmentsW1[8]; break;
@@ -394,6 +484,7 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 		case TNS_W3: fDeltaLife = FlareJudgmentsW3[9]; break;
 		case TNS_W4: fDeltaLife = FlareJudgmentsW4[9]; break;
 		case TNS_Miss: fDeltaLife = FlareJudgmentsMiss[9]; break;
+		case TNS_AvoidMine: fDeltaLife = FlareJudgmentsW1[9]; break;
 		case TNS_HitMine: fDeltaLife = FlareJudgmentsMiss[9]; break;
 		case TNS_None: fDeltaLife = FlareJudgmentsW1[9]; break;
 		case TNS_CheckpointHit: fDeltaLife = FlareJudgmentsW1[9]; break;
@@ -413,7 +504,8 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 				{
 					--currFloatingFlareIndex;
 					fDeltaLife = 0;
-					SetLife(1.0f - FlareJudgmentsW1[currFloatingFlareIndex]);
+					float ratio = (static_cast<float>(GetScore(score)) - FlareTargets[currFloatingFlareIndex]) / (FlareTargets[max(currFloatingFlareIndex + 1, 10)] - FlareTargets[currFloatingFlareIndex]) + (0.4 / currFloatingFlareIndex*2);
+					SetLife(ratio);
 					break;
 				} else fDeltaLife = FlareJudgmentsW1[currFloatingFlareIndex];
 			}
@@ -427,7 +519,8 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 				{
 					--currFloatingFlareIndex;
 					fDeltaLife = 0;
-					SetLife(1.0f - FlareJudgmentsW2[currFloatingFlareIndex]);
+					float ratio = (static_cast<float>(GetScore(score)) - FlareTargets[currFloatingFlareIndex]) / (FlareTargets[max(currFloatingFlareIndex + 1, 10)] - FlareTargets[currFloatingFlareIndex]) + (0.4 / currFloatingFlareIndex * 2);
+					SetLife(ratio);
 					break;
 				} else fDeltaLife = FlareJudgmentsW2[currFloatingFlareIndex];
 			}
@@ -441,7 +534,8 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 				{
 					--currFloatingFlareIndex;
 					fDeltaLife = 0;
-					SetLife(1.0f - FlareJudgmentsW3[currFloatingFlareIndex]);
+					float ratio = (static_cast<float>(GetScore(score)) - FlareTargets[currFloatingFlareIndex]) / (FlareTargets[max(currFloatingFlareIndex + 1, 10)] - FlareTargets[currFloatingFlareIndex]) + (0.4 / currFloatingFlareIndex * 2);
+					SetLife(ratio);
 					break;
 				} else fDeltaLife = FlareJudgmentsW3[currFloatingFlareIndex];
 			}
@@ -455,7 +549,8 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 				{
 					--currFloatingFlareIndex;
 					fDeltaLife = 0;
-					SetLife(1.0f - FlareJudgmentsW4[currFloatingFlareIndex]);
+					float ratio = (static_cast<float>(GetScore(score)) - FlareTargets[currFloatingFlareIndex]) / (FlareTargets[max(currFloatingFlareIndex + 1, 10)] - FlareTargets[currFloatingFlareIndex]) + (0.4 / currFloatingFlareIndex * 2);
+					SetLife(ratio);
 					break;
 				} else fDeltaLife = FlareJudgmentsW4[currFloatingFlareIndex];
 			}
@@ -469,23 +564,44 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 				{
 					--currFloatingFlareIndex;
 					fDeltaLife = 0;
-					SetLife(1.0f - FlareJudgmentsMiss[currFloatingFlareIndex]);
+					float ratio = (static_cast<float>(GetScore(score)) - FlareTargets[currFloatingFlareIndex]) / (FlareTargets[max(currFloatingFlareIndex + 1, 10)] - FlareTargets[currFloatingFlareIndex]) + (0.4 / currFloatingFlareIndex * 2);
+					SetLife(ratio);
 					break;
 				} else fDeltaLife = FlareJudgmentsMiss[currFloatingFlareIndex];
 			}
 			break;
-		case TNS_HitMine:
-			if ( m_fLifePercentage + FlareJudgmentsMiss[currFloatingFlareIndex] > 0 )
+		case TNS_AvoidMine:
+			if (m_fLifePercentage + FlareJudgmentsW1[currFloatingFlareIndex] > 0)
 			{
-				fDeltaLife = FlareJudgmentsMiss[currFloatingFlareIndex];
-			} else {
+				fDeltaLife = FlareJudgmentsW1[currFloatingFlareIndex];
+			}
+			else {
 				if (currFloatingFlareIndex > 0)
 				{
 					--currFloatingFlareIndex;
 					fDeltaLife = 0;
-					SetLife(1.0f - FlareJudgmentsMiss[currFloatingFlareIndex]);
+					float ratio = (static_cast<float>(GetScore(score)) - FlareTargets[currFloatingFlareIndex]) / (FlareTargets[max(currFloatingFlareIndex + 1, 10)] - FlareTargets[currFloatingFlareIndex]) + (0.4 / currFloatingFlareIndex * 2);
+					SetLife(ratio);
 					break;
-				} else fDeltaLife = FlareJudgmentsMiss[currFloatingFlareIndex];
+				}
+				else fDeltaLife = FlareJudgmentsW1[currFloatingFlareIndex];
+			}
+			break;
+		case TNS_HitMine:
+			if (m_fLifePercentage + FlareJudgmentsMiss[currFloatingFlareIndex] > 0)
+			{
+				fDeltaLife = FlareJudgmentsMiss[currFloatingFlareIndex];
+			}
+			else {
+				if (currFloatingFlareIndex > 0)
+				{
+					--currFloatingFlareIndex;
+					fDeltaLife = 0;
+					float ratio = (static_cast<float>(GetScore(score)) - FlareTargets[currFloatingFlareIndex]) / (FlareTargets[max(currFloatingFlareIndex + 1, 10)] - FlareTargets[currFloatingFlareIndex]) + (0.4 / currFloatingFlareIndex * 2);
+					SetLife(ratio);
+					break;
+				}
+				else fDeltaLife = FlareJudgmentsMiss[currFloatingFlareIndex];
 			}
 			break;
 		case TNS_CheckpointHit:
@@ -497,7 +613,8 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 				{
 					--currFloatingFlareIndex;
 					fDeltaLife = 0;
-					SetLife(1.0f - FlareJudgmentsW1[currFloatingFlareIndex]);
+					float ratio = (static_cast<float>(GetScore(score)) - FlareTargets[currFloatingFlareIndex]) / (FlareTargets[max(currFloatingFlareIndex + 1, 10)] - FlareTargets[currFloatingFlareIndex]) + (0.4 / currFloatingFlareIndex * 2);
+					SetLife(ratio);
 					break;
 				} else fDeltaLife = FlareJudgmentsW1[currFloatingFlareIndex];
 			}
@@ -511,7 +628,8 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 				{
 					--currFloatingFlareIndex;
 					fDeltaLife = 0;
-					SetLife(1.0f - FlareJudgmentsW1[currFloatingFlareIndex]);
+					float ratio = (static_cast<float>(GetScore(score)) - FlareTargets[currFloatingFlareIndex]) / (FlareTargets[max(currFloatingFlareIndex + 1, 10)] - FlareTargets[currFloatingFlareIndex]) + (0.4 / currFloatingFlareIndex * 2);
+					SetLife(ratio);
 					break;
 				} else fDeltaLife = FlareJudgmentsW1[currFloatingFlareIndex];
 			}
@@ -532,6 +650,8 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 		break;
 	}
 
+	GetScore(score);
+		
 	ChangeLife( fDeltaLife );
 }
 
@@ -558,7 +678,7 @@ void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 			m_iCombo += 1;
 			m_iMissCombo = 0;
 			if ( m_iCombo > 10 )
-				double _ = CalculatePenalty(min(m_iCombo, 30));  // XXX: unused when called with TNS_W4 or better, but allows the vector to grow
+				CalculatePenalty(min(m_iCombo, 30));  // XXX: unused when called with TNS_W4 or better, but allows the vector to grow
 		}
 		else {
 			if (m_iCombo <= 8) {
@@ -705,7 +825,8 @@ void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 				{
 					--currFloatingFlareIndex;
 					fDeltaLife = 0;
-					SetLife(1.0f - FlareJudgmentsHeld[currFloatingFlareIndex]);
+					float ratio = (static_cast<float>(GetScore(TNS_None, score)) - FlareTargets[currFloatingFlareIndex]) / (FlareTargets[max(currFloatingFlareIndex + 1, 10)] - FlareTargets[currFloatingFlareIndex]) + (0.4 / currFloatingFlareIndex * 2);
+					SetLife(ratio);
 					break;
 				} else fDeltaLife = FlareJudgmentsHeld[currFloatingFlareIndex];
 			}
@@ -719,7 +840,8 @@ void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 				{
 					--currFloatingFlareIndex;
 					fDeltaLife = 0;
-					SetLife(1.0f - FlareJudgmentsLetGo[currFloatingFlareIndex]);
+					float ratio = (static_cast<float>(GetScore(TNS_None, score)) - FlareTargets[currFloatingFlareIndex]) / (FlareTargets[max(currFloatingFlareIndex + 1, 10)] - FlareTargets[currFloatingFlareIndex]) + (0.4 / currFloatingFlareIndex * 2);
+					SetLife(ratio);
 					break;
 				} else fDeltaLife = FlareJudgmentsLetGo[currFloatingFlareIndex];
 			}
@@ -733,7 +855,8 @@ void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 				{
 					--currFloatingFlareIndex;
 					fDeltaLife = 0;
-					SetLife(1.0f - FlareJudgmentsMissed[currFloatingFlareIndex]);
+					float ratio = (static_cast<float>(GetScore(TNS_None, score)) - FlareTargets[currFloatingFlareIndex]) / (FlareTargets[max(currFloatingFlareIndex + 1, 10)] - FlareTargets[currFloatingFlareIndex]) + (0.4 / currFloatingFlareIndex * 2);
+					SetLife(ratio);
 					break;
 				} else fDeltaLife = FlareJudgmentsHeld[currFloatingFlareIndex];
 			}
@@ -767,6 +890,7 @@ void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 		FAIL_M(ssprintf("Invalid DrainType: %i", dtype));
 	}
 
+	GetScore(TNS_None, score);
 	ChangeLife( fDeltaLife );
 }
 
