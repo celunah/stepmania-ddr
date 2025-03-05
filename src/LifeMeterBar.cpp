@@ -504,8 +504,21 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 				{
 					--currFloatingFlareIndex;
 					fDeltaLife = 0;
-					float ratio = (static_cast<float>(GetScore(score)) - FlareTargets[currFloatingFlareIndex]) / (FlareTargets[max(currFloatingFlareIndex + 1, 10)] - FlareTargets[currFloatingFlareIndex]) + (0.4 / currFloatingFlareIndex*2);
-					SetLife(ratio);
+
+					int multi = 0;
+					float baseValue = FlareJudgmentsW1[currFloatingFlareIndex];
+
+					if (currFloatingFlareIndex >= 1 && currFloatingFlareIndex <= 10) {
+						multi = 11 - currFloatingFlareIndex;
+					}
+
+					float life = max(0.1f * currFloatingFlareIndex, max(1 + (baseValue * multi), 0));
+
+					if(currFloatingFlareIndex == 0) {
+						life = abs(FlareJudgmentsW1[currFloatingFlareIndex]);
+					}
+
+					SetLife(life);
 					break;
 				} else fDeltaLife = FlareJudgmentsW1[currFloatingFlareIndex];
 			}
@@ -519,8 +532,20 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 				{
 					--currFloatingFlareIndex;
 					fDeltaLife = 0;
-					float ratio = (static_cast<float>(GetScore(score)) - FlareTargets[currFloatingFlareIndex]) / (FlareTargets[max(currFloatingFlareIndex + 1, 10)] - FlareTargets[currFloatingFlareIndex]) + (0.4 / currFloatingFlareIndex * 2);
-					SetLife(ratio);
+					int multi = 0;
+					float baseValue = FlareJudgmentsW2[currFloatingFlareIndex];
+
+					if (currFloatingFlareIndex >= 1 && currFloatingFlareIndex <= 10) {
+						multi = 11 - currFloatingFlareIndex;
+					}
+
+					float life = max(0.1f * currFloatingFlareIndex, max(1 + (baseValue * multi), 0));
+
+					if (currFloatingFlareIndex == 0) {
+						life = abs(FlareJudgmentsW2[currFloatingFlareIndex]);
+					}
+
+					SetLife(life);
 					break;
 				} else fDeltaLife = FlareJudgmentsW2[currFloatingFlareIndex];
 			}
@@ -534,8 +559,20 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 				{
 					--currFloatingFlareIndex;
 					fDeltaLife = 0;
-					float ratio = (static_cast<float>(GetScore(score)) - FlareTargets[currFloatingFlareIndex]) / (FlareTargets[max(currFloatingFlareIndex + 1, 10)] - FlareTargets[currFloatingFlareIndex]) + (0.4 / currFloatingFlareIndex * 2);
-					SetLife(ratio);
+					int multi = 0;
+					float baseValue = FlareJudgmentsW3[currFloatingFlareIndex];
+
+					if (currFloatingFlareIndex >= 1 && currFloatingFlareIndex <= 10) {
+						multi = 11 - currFloatingFlareIndex;
+					}
+
+					float life = max(0.1f * currFloatingFlareIndex, max(1 + (baseValue * multi), 0));
+
+					if (currFloatingFlareIndex == 0) {
+						life = abs(FlareJudgmentsW3[currFloatingFlareIndex]);
+					}
+
+					SetLife(life);
 					break;
 				} else fDeltaLife = FlareJudgmentsW3[currFloatingFlareIndex];
 			}
@@ -549,8 +586,21 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 				{
 					--currFloatingFlareIndex;
 					fDeltaLife = 0;
-					float ratio = (static_cast<float>(GetScore(score)) - FlareTargets[currFloatingFlareIndex]) / (FlareTargets[max(currFloatingFlareIndex + 1, 10)] - FlareTargets[currFloatingFlareIndex]) + (0.4 / currFloatingFlareIndex * 2);
-					SetLife(ratio);
+					int multi = 0;
+					float baseValue = FlareJudgmentsW4[currFloatingFlareIndex];
+
+					if (currFloatingFlareIndex >= 1 && currFloatingFlareIndex <= 10) {
+						multi = 11 - currFloatingFlareIndex;
+					}
+
+
+					float life = max(0.1f * currFloatingFlareIndex, max(1 + (baseValue * multi), 0));
+
+					if (currFloatingFlareIndex == 0) {
+						life = abs(FlareJudgmentsW4[currFloatingFlareIndex]);
+					}
+
+					SetLife(life);
 					break;
 				} else fDeltaLife = FlareJudgmentsW4[currFloatingFlareIndex];
 			}
@@ -564,8 +614,20 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 				{
 					--currFloatingFlareIndex;
 					fDeltaLife = 0;
-					float ratio = (static_cast<float>(GetScore(score)) - FlareTargets[currFloatingFlareIndex]) / (FlareTargets[max(currFloatingFlareIndex + 1, 10)] - FlareTargets[currFloatingFlareIndex]) + (0.4 / currFloatingFlareIndex * 2);
-					SetLife(ratio);
+					int multi = 0;
+					float baseValue = FlareJudgmentsMiss[currFloatingFlareIndex];
+
+					if (currFloatingFlareIndex >= 1 && currFloatingFlareIndex <= 10) {
+						multi = 11 - currFloatingFlareIndex;
+					}
+
+					float life = max(0.1f * currFloatingFlareIndex, max(1 + (baseValue * multi), 0));
+
+					if (currFloatingFlareIndex == 0) {
+						life = abs(FlareJudgmentsMiss[currFloatingFlareIndex]);
+					}
+
+					SetLife(life);
 					break;
 				} else fDeltaLife = FlareJudgmentsMiss[currFloatingFlareIndex];
 			}
@@ -580,8 +642,20 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 				{
 					--currFloatingFlareIndex;
 					fDeltaLife = 0;
-					float ratio = (static_cast<float>(GetScore(score)) - FlareTargets[currFloatingFlareIndex]) / (FlareTargets[max(currFloatingFlareIndex + 1, 10)] - FlareTargets[currFloatingFlareIndex]) + (0.4 / currFloatingFlareIndex * 2);
-					SetLife(ratio);
+					int multi = 0;
+					float baseValue = FlareJudgmentsW1[currFloatingFlareIndex];
+
+					if (currFloatingFlareIndex >= 1 && currFloatingFlareIndex <= 10) {
+						multi = 11 - currFloatingFlareIndex;
+					}
+
+					float life = max(0.1f * currFloatingFlareIndex, max(1 + (baseValue * multi), 0));
+
+					if (currFloatingFlareIndex == 0) {
+						life = abs(FlareJudgmentsW1[currFloatingFlareIndex]);
+					}
+
+					SetLife(life);
 					break;
 				}
 				else fDeltaLife = FlareJudgmentsW1[currFloatingFlareIndex];
@@ -597,8 +671,20 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 				{
 					--currFloatingFlareIndex;
 					fDeltaLife = 0;
-					float ratio = (static_cast<float>(GetScore(score)) - FlareTargets[currFloatingFlareIndex]) / (FlareTargets[max(currFloatingFlareIndex + 1, 10)] - FlareTargets[currFloatingFlareIndex]) + (0.4 / currFloatingFlareIndex * 2);
-					SetLife(ratio);
+					int multi = 0;
+					float baseValue = FlareJudgmentsMiss[currFloatingFlareIndex];
+
+					if (currFloatingFlareIndex >= 1 && currFloatingFlareIndex <= 10) {
+						multi = 11 - currFloatingFlareIndex;
+					}
+
+					float life = max(0.1f * currFloatingFlareIndex, max(1 + (baseValue * multi), 0));
+
+					if (currFloatingFlareIndex == 0) {
+						life = abs(FlareJudgmentsMiss[currFloatingFlareIndex]);
+					}
+
+					SetLife(life);
 					break;
 				}
 				else fDeltaLife = FlareJudgmentsMiss[currFloatingFlareIndex];
@@ -613,8 +699,20 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 				{
 					--currFloatingFlareIndex;
 					fDeltaLife = 0;
-					float ratio = (static_cast<float>(GetScore(score)) - FlareTargets[currFloatingFlareIndex]) / (FlareTargets[max(currFloatingFlareIndex + 1, 10)] - FlareTargets[currFloatingFlareIndex]) + (0.4 / currFloatingFlareIndex * 2);
-					SetLife(ratio);
+					int multi = 0;
+					float baseValue = FlareJudgmentsW1[currFloatingFlareIndex];
+
+					if (currFloatingFlareIndex >= 1 && currFloatingFlareIndex <= 10) {
+						multi = 11 - currFloatingFlareIndex;
+					}
+
+					float life = max(0.1f * currFloatingFlareIndex, max(1 + (baseValue * multi), 0));
+
+					if (currFloatingFlareIndex == 0) {
+						life = abs(FlareJudgmentsW1[currFloatingFlareIndex]);
+					}
+
+					SetLife(life);
 					break;
 				} else fDeltaLife = FlareJudgmentsW1[currFloatingFlareIndex];
 			}
@@ -628,8 +726,20 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 				{
 					--currFloatingFlareIndex;
 					fDeltaLife = 0;
-					float ratio = (static_cast<float>(GetScore(score)) - FlareTargets[currFloatingFlareIndex]) / (FlareTargets[max(currFloatingFlareIndex + 1, 10)] - FlareTargets[currFloatingFlareIndex]) + (0.4 / currFloatingFlareIndex * 2);
-					SetLife(ratio);
+					int multi = 0;
+					float baseValue = FlareJudgmentsW1[currFloatingFlareIndex];
+
+					if (currFloatingFlareIndex >= 1 && currFloatingFlareIndex <= 10) {
+						multi = 11 - currFloatingFlareIndex;
+					}
+
+					float life = max(0.1f * currFloatingFlareIndex, max(1 + (baseValue * multi), 0));
+
+					if (currFloatingFlareIndex == 0) {
+						life = abs(FlareJudgmentsW1[currFloatingFlareIndex]);
+					}
+
+					SetLife(life);
 					break;
 				} else fDeltaLife = FlareJudgmentsW1[currFloatingFlareIndex];
 			}
@@ -825,8 +935,20 @@ void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 				{
 					--currFloatingFlareIndex;
 					fDeltaLife = 0;
-					float ratio = (static_cast<float>(GetScore(TNS_None, score)) - FlareTargets[currFloatingFlareIndex]) / (FlareTargets[max(currFloatingFlareIndex + 1, 10)] - FlareTargets[currFloatingFlareIndex]) + (0.4 / currFloatingFlareIndex * 2);
-					SetLife(ratio);
+					int multi = 0;
+					float baseValue = FlareJudgmentsHeld[currFloatingFlareIndex];
+
+					if (currFloatingFlareIndex >= 1 && currFloatingFlareIndex <= 10) {
+						multi = 11 - currFloatingFlareIndex;
+					}
+
+					float life = max(0.1f * currFloatingFlareIndex, max(1 + (baseValue * multi), 0));
+
+					if (currFloatingFlareIndex == 0) {
+						life = abs(FlareJudgmentsHeld[currFloatingFlareIndex]);
+					}
+
+					SetLife(life);
 					break;
 				} else fDeltaLife = FlareJudgmentsHeld[currFloatingFlareIndex];
 			}
@@ -840,8 +962,20 @@ void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 				{
 					--currFloatingFlareIndex;
 					fDeltaLife = 0;
-					float ratio = (static_cast<float>(GetScore(TNS_None, score)) - FlareTargets[currFloatingFlareIndex]) / (FlareTargets[max(currFloatingFlareIndex + 1, 10)] - FlareTargets[currFloatingFlareIndex]) + (0.4 / currFloatingFlareIndex * 2);
-					SetLife(ratio);
+					int multi = 0;
+					float baseValue = FlareJudgmentsLetGo[currFloatingFlareIndex];
+
+					if (currFloatingFlareIndex >= 1 && currFloatingFlareIndex <= 10) {
+						multi = 11 - currFloatingFlareIndex;
+					}
+
+					float life = max(0.1f * currFloatingFlareIndex, max(1 + (baseValue * multi), 0));
+
+					if (currFloatingFlareIndex == 0) {
+						life = abs(FlareJudgmentsLetGo[currFloatingFlareIndex]);
+					}
+
+					SetLife(life);
 					break;
 				} else fDeltaLife = FlareJudgmentsLetGo[currFloatingFlareIndex];
 			}
@@ -855,8 +989,20 @@ void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 				{
 					--currFloatingFlareIndex;
 					fDeltaLife = 0;
-					float ratio = (static_cast<float>(GetScore(TNS_None, score)) - FlareTargets[currFloatingFlareIndex]) / (FlareTargets[max(currFloatingFlareIndex + 1, 10)] - FlareTargets[currFloatingFlareIndex]) + (0.4 / currFloatingFlareIndex * 2);
-					SetLife(ratio);
+					int multi = 0;
+					float baseValue = FlareJudgmentsMissed[currFloatingFlareIndex];
+
+					if (currFloatingFlareIndex >= 1 && currFloatingFlareIndex <= 10) {
+						multi = 11 - currFloatingFlareIndex;
+					}
+
+					float life = max(0.1f * currFloatingFlareIndex, max(1 + (baseValue * multi), 0));
+
+					if (currFloatingFlareIndex == 0) {
+						life = abs(FlareJudgmentsMissed[currFloatingFlareIndex]);
+					}
+
+					SetLife(life);
 					break;
 				} else fDeltaLife = FlareJudgmentsHeld[currFloatingFlareIndex];
 			}
