@@ -22,9 +22,13 @@ Target DDR version: DDR A20 or later
   - The gradual darkening animation has been replaced with a DDR accurate darkening animation.
 - Arcade Accurate Shock Arrows
   - Groups of Shock Arrows (4 or 8) will be counted as 1 combo.
+- Arcade Accurate Timers
+  - You will have unlimited time to pick choices in game menus when in Event Mode. This does not affect any internal timers.
  
 ## TODO
-- [ ] Handle O.K. judgments for freeze arrow jumps (Please PR an implementation!)
+- [ ] Handle O.K. judgments for freeze arrow jumps (Please PR an implementation!)*
+
+<sub><sup>It is possible to implement this in Lua.</sup></sub>
 
 ## Installation
 ### From Packages
