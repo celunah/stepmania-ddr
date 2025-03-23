@@ -405,19 +405,21 @@ void ScoreKeeperNormal::HandleTapScore( const TapNote &tn )
 		// count mine groups (shock arrows) like DDR
 		if( tns == TNS_AvoidMine && m_AvoidMineIncrementsCombo ) {
 			int countEvery = 4;
-
-			if (GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_StyleType == StyleType_OnePlayerTwoSides) {
+			if ( GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_StyleType == StyleType_OnePlayerTwoSides ) {
 				countEvery = 8;
 			}
 
-		    if (m_iMinesJudged >= countEvery / 2) {
-				if (m_iMinesJudged == countEvery / 2)
-					HandleComboInternal(1, 0, 0);
-				if (m_iMinesJudged == countEvery)
-					m_iMinesJudged = 0;
-		    }
+			m_iMinesJudged += 1;
 
-		    m_iMinesJudged += 1;
+			// Always count combo at half the counting period (4th in single, 4th in double)
+			if (m_iMinesJudged == 4) {
+				HandleComboInternal(1, 0, 0);
+			}
+
+			// Reset counter when we reach the full count
+			if (m_iMinesJudged >= countEvery) {
+				m_iMinesJudged = 0;
+			}
 		}
 
 		NSMAN->ReportScore(

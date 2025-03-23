@@ -8,6 +8,7 @@
 #include "GameSoundManager.h"
 #include "ThemeMetric.h"
 #include "ActorUtil.h"
+#include "GameState.h"
 
 RString WARNING_COMMAND_NAME( size_t i ) { return ssprintf("Warning%dCommand",int(i)); }
 
@@ -74,8 +75,12 @@ void MenuTimer::EnableStealth( bool bStealth )
 }
 
 void MenuTimer::Update( float fDeltaTime ) 
-{ 
+{
 	ActorFrame::Update( fDeltaTime );
+
+	if ( GAMESTATE->IsEventMode() && (m_fSecondsLeft == 20 || m_fSecondsLeft == 30 || m_fSecondsLeft == 90) ) {
+		return;
+	}
 
 	if( m_bPaused )
 		return;
