@@ -754,10 +754,6 @@ static void InitializeConfOptions()
 	// float or a dynamic set of options, such as Language or Theme.
 	// Those require individual attention.
 #define ADD(x) g_ConfOptions.push_back( x )
-	// Select game
-	ADD( ConfOption( "Game",			GameSel,		GameChoices ) );
-	g_ConfOptions.back().m_iEffects = OPT_CHANGE_GAME;
-
 	// Appearance options
 	ADD( ConfOption( "Language",			Language,		LanguageChoices ) );
 	ADD( ConfOption( "Theme",			RequestedTheme,		ThemeChoices ) );
