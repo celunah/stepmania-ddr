@@ -420,7 +420,8 @@ int TimingData::GetSegmentIndexAtRow(TimingSegmentType tst, int iRow ) const
 	return INVALID_INDEX;
 }
 
-struct ts_less : binary_function <TimingSegment*, TimingSegment*, bool>
+// removed deprecated std::binary_function
+struct ts_less
 {
 	bool operator() (const TimingSegment *x, const TimingSegment *y) const
 	{

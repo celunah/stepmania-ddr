@@ -13,6 +13,6 @@ find_path(DL_INCLUDE_DIR dlfcn.h PATHS /usr/local/include /usr/include)
 find_library(DL_LIBRARIES dl PATHS /usr/local/lib /usr/lib /lib)
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(DL DEFAULT_MSG DL_LIBRARIES DL_INCLUDE_DIR)
+find_package_handle_standard_args(Dl DEFAULT_MSG DL_LIBRARIES DL_INCLUDE_DIR)
 
 mark_as_advanced(DL_INCLUDE_DIR DL_LIBRARIES)

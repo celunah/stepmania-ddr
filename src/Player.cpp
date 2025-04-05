@@ -1312,11 +1312,11 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 				//LOG->Trace("fLife before minus: %f",fLife);
 
 				// should be approximately 18 frames @60fps
-				if (fLife > 0.24f) {
-					fLife = 0.24f;
+				if (fLife > 0.06f) {
+					fLife = 0.06f;
 				}
 
-				fLife -= 0.004f;
+				fLife -= 0.001f;
 
 				//LOG->Trace("fLife before clamp: %f",fLife);
 				fLife = max(0, fLife);

@@ -512,7 +512,11 @@ RString MovieDecoder_FFMpeg::OpenCodec()
 
 	ASSERT( m_pStream != nullptr );
 	if( m_pStreamCodec->codec )
+#if VCODEC_VERSION_MAJOR <= 58
 		avcodec::avcodec_close( m_pStreamCodec );
+#else
+		avcodec::avcodec_free_context(&m_pStreamCodec);
+#endif
 
 	const avcodec::AVCodec *pCodec = avcodec::avcodec_find_decoder( m_pStreamCodec->codec_id );
 	if( pCodec == nullptr )
@@ -541,7 +545,11 @@ void MovieDecoder_FFMpeg::Close()
 {
 	if( m_pStream && m_pStreamCodec->codec )
 	{
+#if LIBAVCODEC_VERSION_MAJOR <= 58
 		avcodec::avcodec_close( m_pStreamCodec );
+#else
+		avcodec::avcodec_free_context(&m_pStreamCodec);
+#endif
 		m_pStream = nullptr;
 	}
 

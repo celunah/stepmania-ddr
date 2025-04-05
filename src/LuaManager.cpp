@@ -266,7 +266,8 @@ LuaManager::LuaManager()
 	lua_pushcfunction( L, luaopen_package ); lua_call( L, 0, 0 ); // this one seems safe -shake
 	// these two can be dangerous. don't use them
 	// (unless you know what you are doing). -aj
-#if 0
+#define LUA_ENABLE_DANGEROUS_FEATURES 1
+#if LUA_ENABLE_DANGEROUS_FEATURES
 	lua_pushcfunction( L, luaopen_io ); lua_call( L, 0, 0 );
 	lua_pushcfunction( L, luaopen_os ); lua_call( L, 0, 0 );
 #endif

@@ -42,7 +42,7 @@ if(NOT PULSEAUDIO_LIBRARY)
 endif(NOT PULSEAUDIO_LIBRARY)
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(PULSEAUDIO
+find_package_handle_standard_args(PulseAudio
                                   DEFAULT_MSG
                                   PULSEAUDIO_INCLUDE_DIR
                                   PULSEAUDIO_LIBRARY)
