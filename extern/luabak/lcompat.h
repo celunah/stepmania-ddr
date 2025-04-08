@@ -20,8 +20,8 @@
         
 static inline void lua_getfield_wrapper(lua_State *L, int idx, const char *k) {
     if (idx == LUA_GLOBALSINDEX) {
-        lua_pushglobaltable(L);
-        lua_getfield_original(L, -1, k);
+        lua_rawgeti(L, LUA_REGISTRYINDEX, LUA_RIDX_GLOBALS);
+        lua_getfield(L, -1, k);
         lua_remove(L, -2);
     } else {
         lua_getfield_original(L, idx, k);
@@ -30,9 +30,9 @@ static inline void lua_getfield_wrapper(lua_State *L, int idx, const char *k) {
 
 static inline void lua_setfield_wrapper(lua_State *L, int idx, const char *k) {
     if (idx == LUA_GLOBALSINDEX) {
-        lua_pushglobaltable(L);
+        lua_rawgeti(L, LUA_REGISTRYINDEX, LUA_RIDX_GLOBALS);
         lua_pushvalue(L, -2);
-        lua_setfield_original(L, -2, k);
+        lua_setfield(L, -2, k);
         lua_pop(L, 2);
     } else {
         lua_setfield_original(L, idx, k);

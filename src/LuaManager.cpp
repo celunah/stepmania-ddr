@@ -273,6 +273,8 @@ LuaManager::LuaManager()
 	lua_require(L, "os", luaopen_os);
 #endif
 
+        lua_require(L, "compat", luaopen_compat);
+
 	// Store the thread pool in a table on the stack, in the main thread.
 #define THREAD_POOL 1
 	lua_newtable( L );
