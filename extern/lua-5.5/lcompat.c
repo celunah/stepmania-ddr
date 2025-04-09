@@ -7,6 +7,7 @@
 #include <math.h>
 #include <string.h>
 #include <limits.h>
+#include <stdlib.h>
 
 #include "lua.h"
 #include "lauxlib.h"
@@ -74,6 +75,15 @@ static int math_ldexp(lua_State *L) {
     }
     lua_pushnumber(L, ldexp(luaL_checknumber(L, 1), (int)exp));
     return 1;
+}
+
+static int math_mod(lua_State *L) {
+	lua_getglobal(L, "math");
+	lua_getfield(L, -1, "fmod");
+	lua_pushvalue(L, 1);
+	lua_pushvalue(L, 2);
+	lua_call(L, 2, 1);
+	return 1;
 }
 
 /* ==================== Table Compatibility ==================== */
@@ -341,6 +351,7 @@ static const luaL_Reg compat_funcs[] = {
     {"log10", math_log10},
     {"frexp", math_frexp},
     {"ldexp", math_ldexp},
+    {"mod", math_mod},
     
     /* Table functions */
     {"maxn", table_maxn},
@@ -401,6 +412,9 @@ LUAMOD_API int luaopen_compat(lua_State *L) {
         
         lua_pushcfunction(L, math_ldexp);
         lua_setfield(L, -2, "ldexp");
+
+        lua_pushcfunction(L, math_mod);
+        lua_setfield(L, -2, "mod");
     }
     lua_pop(L, 1);
     
@@ -446,8 +460,11 @@ void lcompat_setglobal(lua_State *L, const char *name) {
     lua_pop(L, 2);
 }
 
-void lcompat_getglobal(lua_State *L, const char *name) {
+int lcompat_getglobal(lua_State *L, const char *name) {
+    int type;
     lua_pushglobaltable(L);
     lua_getfield(L, -1, name);
+    type = lua_type(L, -1);
     lua_remove(L, -2);
+    return type;
 }

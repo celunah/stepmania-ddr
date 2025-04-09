@@ -273,7 +273,10 @@ LuaManager::LuaManager()
 	lua_require(L, "os", luaopen_os);
 #endif
 
-        lua_require(L, "compat", luaopen_compat);
+	// these modules are loaded by default on Lua 5.1, but SMLua 5.5 needs them to be loaded explicitly
+	lua_require(L, "coroutine", luaopen_coroutine); // need to include lcorolib.c
+	lua_require(L, "package", luaopen_package);
+	lua_require(L, "compat", luaopen_compat);
 
 	// Store the thread pool in a table on the stack, in the main thread.
 #define THREAD_POOL 1

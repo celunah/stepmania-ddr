@@ -44,7 +44,11 @@
 /* ORDER RESERVED */
 static const char *const luaX_tokens [] = {
     "and", "break", "do", "else", "elseif",
+#if LUA_USE_CMD == 1
     "end", "false", "for", "function", "goto", "cmd", "if",
+#else
+    "end", "false", "for", "function", "goto", "if",
+#endif
     "in", "local", "nil", "not", "or", "repeat",
     "return", "then", "true", "until", "while",
     "//", "..", "...", "==", ">=", "<=", "~=",

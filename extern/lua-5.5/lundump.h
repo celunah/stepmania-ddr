@@ -26,8 +26,11 @@
 */
 #define LUAC_VERSION	(LUA_VERSION_MAJOR_N*16+LUA_VERSION_MINOR_N)
 
+#if LUA_USE_SM_BYTECODE == 1
 #define LUAC_FORMAT    'S'     /* this is Stepmania's own format */
-
+#else
+#define LUAC_FORMAT    0
+#endif
 
 /* load one chunk; from lundump.c */
 LUAI_FUNC LClosure* luaU_undump (lua_State* L, ZIO* Z, const char* name,

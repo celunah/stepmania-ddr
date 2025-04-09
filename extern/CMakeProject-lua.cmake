@@ -3,6 +3,7 @@ set(LUA_SRC
     "lua-5.5/lauxlib.c"
     "lua-5.5/lbaselib.c"
     "lua-5.5/lcode.c"
+    "lua-5.5/lcorolib.c"
     "lua-5.5/lcompat.c"
     "lua-5.5/lctype.c"
     "lua-5.5/ldblib.c"

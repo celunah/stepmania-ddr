@@ -107,6 +107,10 @@ static inline void lua_setfield_wrapper(lua_State *L, int idx, const char *k) {
 #define lua_number2int(i,d)     ((i) = (int)(d))
 #define lua_number2integer(i,d) ((i) = (lua_Integer)(d))
 
+#undef lua_tonumber
+#define lua_tonumber(L,i) \
+  (lua_isinteger(L,(i)) ? (lua_Number)lua_tointeger(L,(i)) : lua_tonumberx(L,(i),NULL))
+
 /*==============================================================================
   Error handling
 ==============================================================================*/
@@ -148,7 +152,7 @@ LUA_API int lcompat_setfenv(lua_State *L, int idx);
 LUA_API int lcompat_cpcall(lua_State *L, lua_CFunction func, void *ud);
 LUA_API void lcompat_pushvalue_at_globalsindex(lua_State *L);
 LUA_API void lcompat_setglobal(lua_State *L, const char *name);
-LUA_API void lcompat_getglobal(lua_State *L, const char *name);
+LUA_API int lcompat_getglobal(lua_State *L, const char *name);
 LUA_API void lcompat_pushglobals(lua_State *L);
 
 /* Main initialization */

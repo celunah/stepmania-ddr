@@ -1056,6 +1056,7 @@ static int explist (LexState *ls, expdesc *v) {
   return n;
 }
 
+#if LUA_USE_CMD == 1
 static void cmd_funcargs (LexState *ls, expdesc *f) {
   FuncState *fs = ls->fs;
   expdesc args;
@@ -1133,6 +1134,7 @@ static void cmd(LexState *ls, expdesc *e, int line) {
   codeclosure(ls, e);
   close_func(ls);
 }
+#endif
 
 static void funcargs (LexState *ls, expdesc *f) {
   FuncState *fs = ls->fs;
@@ -1296,11 +1298,13 @@ static void simpleexp (LexState *ls, expdesc *v) {
       body(ls, v, 0, ls->linenumber);
       return;
     }
+#if LUA_USE_CMD == 1
     case TK_CMD: {
       luaX_next(ls);
       cmd(ls, v, ls->linenumber);
       return;
     }
+#endif
     default: {
       suffixedexp(ls, v);
       return;
