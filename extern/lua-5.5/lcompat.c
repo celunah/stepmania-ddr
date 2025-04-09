@@ -388,18 +388,13 @@ LUAMOD_API int luaopen_compat(lua_State *L) {
     lua_pushcfunction(L, compat_loadstring);
     lua_setglobal(L, "loadstring");
 
-    /* Register in package.loaded */
+    /* Register in package.loaded
+     * 'package' must be loaded for this to not return nil and crash. */
     lua_getglobal(L, "package");
-    if (!lua_isnil(L, -1)) {
-        lua_getfield(L, -1, "loaded");
-        if (!lua_isnil(L, -1)) {
-            // Push compat table again
-            lua_pushvalue(L, -3);
-            lua_setfield(L, -2, "compat");
-            lua_pop(L, 1);  // pop loaded
-        }
-        lua_pop(L, 1);  // pop package
-    }
+	lua_getfield(L, -1, "loaded");
+	lua_pushvalue(L, -3);
+	lua_setfield(L, -2, "compat");
+	lua_pop(L, 2);
     
     /* Patch standard libraries */
     lua_getglobal(L, "math");
