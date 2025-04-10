@@ -6,8 +6,6 @@
 
 #include <math.h>
 #include <string.h>
-#include <limits.h>
-#include <stdlib.h>
 
 #include "lua.h"
 #include "lauxlib.h"
