@@ -13,6 +13,8 @@
 #include <limits.h>
 #include <stdarg.h>
 #include <string.h>
+#include <stdio.h>
+#include <math.h>
 
 #include "lua.h"
 
@@ -369,9 +371,17 @@ LUA_API int lua_compare (lua_State *L, int index1, int index2, int op) {
 LUA_API unsigned (lua_numbertocstring) (lua_State *L, int idx, char *buff) {
   const TValue *o = index2value(L, idx);
   if (ttisnumber(o)) {
-    unsigned len = luaO_tostringbuff(o, buff);
-    buff[len++] = '\0';  /* add final zero */
-    return len;
+    lua_Number n = nvalue(o);
+    lua_Number intpart;
+    if (modf(n, &intpart) == 0.0) {
+      unsigned len = l_sprintf(buff, 32, LUA_INTEGER_FMT, (lua_Integer)n);
+      buff[len++] = '\0';
+      return len;
+    } else {
+      unsigned len = luaO_tostringbuff(o, buff);
+      buff[len++] = '\0';  /* add final zero */
+      return len;
+    }
   }
   else
     return 0;

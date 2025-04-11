@@ -2428,10 +2428,11 @@ public:
 		p->GetDisplayBpms(temp);
 		float fMin = temp.GetMin();
 		float fMax = temp.GetMax();
-		vector<float> fBPMs;
-		fBPMs.push_back( fMin );
-		fBPMs.push_back( fMax );
-		LuaHelpers::CreateTableFromArray(fBPMs, L);
+		lua_newtable(L);
+		lua_pushnumber(L, fMin);
+		lua_rawseti(L, -2, 1);
+		lua_pushnumber(L, fMax);
+		lua_rawseti(L, -2, 2);
 		return 1;
 	}
 	static int IsDisplayBpmSecret( T* p, lua_State *L )

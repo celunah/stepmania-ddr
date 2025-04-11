@@ -1063,12 +1063,12 @@ static void cmd_funcargs (LexState *ls, expdesc *f) {
   int base, nparams;
   int line = ls->linenumber;
   if (ls->t.token == ')' || ls->t.token == ';')
-      args.k = VVOID;
+    args.k = VVOID;
   else if (ls->t.token == ',') {
-      luaX_next(ls);
-      explist(ls, &args);
-      if (hasmultret(args.k))
-        luaK_setmultret(fs, &args);
+    luaX_next(ls);
+    explist(ls, &args);
+    if (hasmultret(args.k))
+      luaK_setmultret(fs, &args);
   }
   else {
     luaX_syntaxerror(ls, "')'" " expected");
@@ -1098,7 +1098,7 @@ static void cmd_body (LexState *ls, expdesc *e) {
         return;
       case ';':
         luaX_next(ls);
-       continue;
+        continue;
       default: {
         expdesc key;
         init_exp(e, VLOCAL, 0);

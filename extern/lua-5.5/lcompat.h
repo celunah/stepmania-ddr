@@ -7,6 +7,8 @@
 #ifndef LCOMPAT_H
 #define LCOMPAT_H
 
+#include <math.h>
+
 #include "lua.h"
 #include "lauxlib.h"
 
@@ -23,13 +25,13 @@
 
 /* Macro version for lua_settable */
 #define lua_settable(L, idx) \
-    ((idx) == LUA_GLOBALSINDEX ? (lua_pushglobaltable(L), lua_insert(L, -3), \
-      lua_settable(L, -3), lua_remove(L, -1)) : lua_settable(L, (idx)))
+  ((idx) == LUA_GLOBALSINDEX ? (lua_pushglobaltable(L), lua_insert(L, -3), \
+    lua_settable(L, -3), lua_remove(L, -1)) : lua_settable(L, (idx)))
 
 /* Macro version for lua_gettable */
 #define lua_gettable(L, idx) \
-    ((idx) == LUA_GLOBALSINDEX ? (lua_pushglobaltable(L), lua_gettable(L, -1)) \
-      : lua_gettable(L, (idx)))
+  ((idx) == LUA_GLOBALSINDEX ? (lua_pushglobaltable(L), lua_gettable(L, -1)) \
+    : lua_gettable(L, (idx)))
 
 /* Save original functions */
 #define lua_getfield_original lua_getfield
@@ -37,25 +39,25 @@
 
 /* Inline wrapper for lua_getfield */
 static inline void lua_getfield_wrapper(lua_State *L, int idx, const char *k) {
-    if (idx == LUA_GLOBALSINDEX) {
-        lua_pushglobaltable(L);
-        lua_getfield_original(L, -1, k);
-        lua_remove(L, -2);  /* remove global table */
-    } else {
-        lua_getfield_original(L, idx, k);
-    }
+  if (idx == LUA_GLOBALSINDEX) {
+    lua_pushglobaltable(L);
+    lua_getfield_original(L, -1, k);
+    lua_remove(L, -2);  /* remove global table */
+  } else {
+    lua_getfield_original(L, idx, k);
+  }
 }
 
 /* Inline wrapper for lua_setfield */
 static inline void lua_setfield_wrapper(lua_State *L, int idx, const char *k) {
-    if (idx == LUA_GLOBALSINDEX) {
-        lua_pushglobaltable(L);
-        lua_pushvalue(L, -2);  /* duplicate value */
-        lua_setfield_original(L, -2, k);
-        lua_pop(L, 2);  /* pop global table and value */
-    } else {
-        lua_setfield_original(L, idx, k);
-    }
+  if (idx == LUA_GLOBALSINDEX) {
+    lua_pushglobaltable(L);
+    lua_pushvalue(L, -2);  /* duplicate value */
+    lua_setfield_original(L, -2, k);
+    lua_pop(L, 2);  /* pop global table and value */
+  } else {
+    lua_setfield_original(L, idx, k);
+  }
 }
 
 /* Override the standard functions */
@@ -64,12 +66,12 @@ static inline void lua_setfield_wrapper(lua_State *L, int idx, const char *k) {
 
 /* Raw versions of table access */
 #define lua_rawset(L, idx) \
-    ((idx) == LUA_GLOBALSINDEX ? (lua_pushglobaltable(L), lua_insert(L, -3), \
-      lua_rawset(L, -3), lua_remove(L, -1)) : lua_rawset(L, (idx)))
+  ((idx) == LUA_GLOBALSINDEX ? (lua_pushglobaltable(L), lua_insert(L, -3), \
+    lua_rawset(L, -3), lua_remove(L, -1)) : lua_rawset(L, (idx)))
 
 #define lua_rawget(L, idx) \
-    ((idx) == LUA_GLOBALSINDEX ? (lua_pushglobaltable(L), lua_rawget(L, -1)) \
-      : lua_rawget(L, (idx)))
+  ((idx) == LUA_GLOBALSINDEX ? (lua_pushglobaltable(L), lua_rawget(L, -1)) \
+    : lua_rawget(L, (idx)))
 
 /* Global variable access */
 #define lua_setglobal(L, name) lcompat_setglobal(L, name)
@@ -86,62 +88,68 @@ static inline void lua_setfield_wrapper(lua_State *L, int idx, const char *k) {
   Deprecated function replacements
 ==============================================================================*/
 
-#define lua_open             luaL_newstate
-#define lua_newtable(L)      lua_createtable(L, 0, 0)
-#define lua_strlen(L,i)      lua_rawlen(L, (i))
-#define lua_objlen(L,i)      lua_rawlen(L, (i))
-#define lua_equal(L,a,b)     lua_compare(L, (a), (b), LUA_OPEQ)
+#define lua_open       luaL_newstate
+#define lua_newtable(L)    lua_createtable(L, 0, 0)
+#define lua_strlen(L,i)    lua_rawlen(L, (i))
+#define lua_objlen(L,i)    lua_rawlen(L, (i))
+#define lua_equal(L,a,b)   lua_compare(L, (a), (b), LUA_OPEQ)
 #define lua_lessthan(L,a,b)  lua_compare(L, (a), (b), LUA_OPLT)
 #define lua_require(L, name, func) \
-    (luaL_requiref(L, (name), (func), 1), lua_pop(L, 1))
+  (luaL_requiref(L, (name), (func), 1), lua_pop(L, 1))
 
 /*==============================================================================
   Integer compatibility
 ==============================================================================*/
 
-#define luaL_checkint(L,n)   ((int)luaL_checkinteger(L, (n)))
-#define luaL_optint(L,n,d)   ((int)luaL_optinteger(L, (n), (d)))
-#define luaL_checklong(L,n)  ((long)luaL_checkinteger(L, (n)))
-#define luaL_optlong(L,n,d)  ((long)luaL_optinteger(L, (n), (d)))
 
-#define lua_number2int(i,d)     ((i) = (int)(d))
+#define luaL_checkint(L,n)   ((int)luaL_checknumber(L, (n)))
+#define luaL_optint(L,n,d)   ((int)luaL_optnumber(L, (n), (d)))
+#define luaL_checklong(L,n)  ((long)luaL_checknumber(L, (n)))
+#define luaL_optlong(L,n,d)  ((long)luaL_optnumber(L, (n), (d)))
+
+#define lua_number2int(i,d)   ((i) = (int)(d))
 #define lua_number2integer(i,d) ((i) = (lua_Integer)(d))
 
-#undef lua_tonumber
-#define lua_tonumber(L,i) \
-  (lua_isinteger(L,(i)) ? (lua_Number)lua_tointeger(L,(i)) : lua_tonumberx(L,(i),NULL))
+inline void lcompat_pushnumber(lua_State *L, lua_Number num) {
+  if (floor(num) == num && num >= LUA_MININTEGER && num <= LUA_MAXINTEGER)
+    lua_pushinteger(L, (lua_Integer)num);
+  else
+    lua_pushnumber(L, num);
+}
+
+#define lua_pushnumber(L,n) lcompat_pushnumber(L,n)
 
 /*==============================================================================
   Error handling
 ==============================================================================*/
 
 #define luaL_typerror(L,n,t) \
-    luaL_error(L, "bad argument #%d (%s expected, got %s)", \
-               (n), (t), luaL_typename(L, (n)))
+  luaL_error(L, "bad argument #%d (%s expected, got %s)", \
+    (n), (t), luaL_typename(L, (n)))
 
 /*==============================================================================
   Table length (Lua 5.1 compatibility)
 ==============================================================================*/
 
-#define luaL_getn(L,i)       ((int)lua_rawlen(L, (i)))
-#define luaL_setn(L,i,j)     ((void)0)  /* no-op in Lua 5.2+ */
+#define luaL_getn(L,i)     ((int)lua_rawlen(L, (i)))
+#define luaL_setn(L,i,j)   ((void)0)  /* no-op in Lua 5.2+ */
 
 /*==============================================================================
   Protected calls
 ==============================================================================*/
 
-#define lua_cpcall(L,f,u)    lcompat_cpcall(L, (f), (u))
+#define lua_cpcall(L,f,u)  lcompat_cpcall(L, (f), (u))
 
 /*==============================================================================
   Library registration
 ==============================================================================*/
 
 #define luaL_register(L, libname, l) \
-    (luaL_newlib(L, l), lua_pushvalue(L, -1), lua_setglobal(L, libname))
+  (luaL_newlib(L, l), lua_pushvalue(L, -1), lua_setglobal(L, libname))
 
 #define luaL_openlib(L, n, l, nu) \
-    ((n) ? (luaL_newlib(L, l), lua_pushvalue(L, -1), lua_setglobal(L, n)) : \
-           (luaL_setfuncs(L, l, nu)))
+  ((n) ? (luaL_newlib(L, l), lua_pushvalue(L, -1), lua_setglobal(L, n)) : \
+    (luaL_setfuncs(L, l, nu)))
 
 /*==============================================================================
   Compatibility API declarations
