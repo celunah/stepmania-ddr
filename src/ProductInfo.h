@@ -16,7 +16,7 @@
  * As an example, use "StepMania4" here, not "StepMania".
  * It would cause a conflict with older versions such as StepMania 3.X.
  */
-#define PRODUCT_ID_BARE OpenDDR 5.1
+#define PRODUCT_ID_BARE OpenDDR 5.2
 
 // These cannot be #undef'd so make them unlikely to conflict with anything
 #define PRODUCT_STRINGIFY(x) #x
@@ -25,10 +25,10 @@
 #define PRODUCT_FAMILY		PRODUCT_XSTRINGIFY(PRODUCT_FAMILY_BARE)
 #define PRODUCT_ID			PRODUCT_XSTRINGIFY(PRODUCT_ID_BARE)
 
-#define VIDEO_TROUBLESHOOTING_URL "http://old.stepmania.com/stepmaniawiki.php?title=Video_Driver_Troubleshooting"
+#define VIDEO_TROUBLESHOOTING_URL "https://example.com"
 /** @brief The URL to report bugs on the program. */
-#define REPORT_BUG_URL "https://github.com/stepmania/stepmania/issues"
-#define SM_DOWNLOAD_URL "https://www.stepmania.com/download/"
+#define REPORT_BUG_URL "https://github.com/h-lunah/stepmania-ddr/issues/new"
+#define SM_DOWNLOAD_URL "https://example.com"
 
 #define CAN_INSTALL_PACKAGES true
 
