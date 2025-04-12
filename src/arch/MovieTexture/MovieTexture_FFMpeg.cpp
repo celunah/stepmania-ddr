@@ -512,7 +512,7 @@ RString MovieDecoder_FFMpeg::OpenCodec()
 
 	ASSERT( m_pStream != nullptr );
 	if( m_pStreamCodec->codec )
-#if VCODEC_VERSION_MAJOR <= 58
+#if AVCODEC_VERSION_MAJOR <= 58
 		avcodec::avcodec_close( m_pStreamCodec );
 #else
 		avcodec::avcodec_free_context(&m_pStreamCodec);
