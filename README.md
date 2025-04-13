@@ -7,7 +7,7 @@ This fork is designed to act like modern versions of Dance Dance Revolution.
 
 Target DDR version: DDR A20 or later
 
-[![Continuous integration](https://github.com/h-lunah/stepmania-ddr/workflows/Continuous%20integration/badge.svg?branch=5_1-new)](https://github.com/h-lunah/stepmania-ddr/actions?query=workflow%3A%22Continuous+integration%22+branch%3A5_1-new)
+[![Continuous integration](https://github.com/h-lunah/stepmania-ddr/actions/workflows/ci.yml/badge.svg?branch=5_1-new)](https://github.com/h-lunah/stepmania-ddr/actions/workflows/ci.yml)
 
 ## New Features
 - New Gauges
