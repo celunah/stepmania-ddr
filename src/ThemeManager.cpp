@@ -92,7 +92,7 @@ public:
 		{
 			return GetValue();
 		}
-		RString const & curLanguage = (THEME && THEME->IsThemeLoaded() ? THEME->GetCurLanguage() : "current");
+		RString const& curLanguage = (THEME && THEME->IsThemeLoaded() ? THEME->GetCurLanguage() : RString("current"));
 		LOG->Warn("Missing translation for %s in the %s language.", m_sName.c_str(), curLanguage.c_str());
 		return m_sName;
 	}
@@ -505,7 +505,7 @@ void ThemeManager::RunLuaScripts( const RString &sMask, bool bUseThemeDir )
 		 * scripts call GetThemeName(), it'll return the theme the script is in. */
 
 		m_sCurThemeName = iter->sThemeName;
-		const RString &sScriptDir = bUseThemeDir ? GetThemeDirFromName( m_sCurThemeName ) : "/";
+		const RString& sScriptDir = bUseThemeDir ? GetThemeDirFromName(m_sCurThemeName) : RString("/");
 
 		vector<RString> asElementPaths;
 		// get files from directories

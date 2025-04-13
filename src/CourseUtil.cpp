@@ -209,7 +209,7 @@ void CourseUtil::SortByMostRecentlyPlayedForMachine( vector<Course*> &vpCoursesI
 	for (Course const * c: vpCoursesInOut)
 	{
 		int iNumTimesPlayed = pProfile->GetCourseNumTimesPlayed( c );
-		RString val = iNumTimesPlayed ? pProfile->GetCourseLastPlayedDateTime(c).GetString() : "9999999999999";
+		RString val = iNumTimesPlayed ? pProfile->GetCourseLastPlayedDateTime(c).GetString() : RString("9999999999999");
 		course_sort_val[c] = val;
 	}
 
@@ -304,7 +304,7 @@ void CourseUtil::AutogenOniFromArtist( const RString &sArtistName, RString sArti
 	 * song set changes. */
 	{
 		RandomGen rng( GetHashForString( sArtistName ) + aSongs.size() );
-		random_shuffle( aSongs.begin(), aSongs.end(), rng );
+		shuffle( aSongs.begin(), aSongs.end(), rng );
 	}
 
 	// Only use up to four songs.

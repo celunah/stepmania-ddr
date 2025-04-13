@@ -1046,8 +1046,8 @@ void NoteDisplay::DrawHoldBodyInternal(vector<Sprite*>& sprite_top,
 	const float bottom_beat, bool glow)
 {
 	// Draw the top cap
-	part_args.y_top = head_minus_top;
-	part_args.y_bottom = y_head;
+	part_args.y_top = head_minus_top + 1.0f;
+	part_args.y_bottom = y_head + 1.0f;
 	part_args.top_beat = top_beat;
 	part_args.bottom_beat = top_beat;
 	part_args.wrapping = false;
@@ -1059,11 +1059,10 @@ void NoteDisplay::DrawHoldBodyInternal(vector<Sprite*>& sprite_top,
 	part_args.wrapping = true;
 	DrawHoldPart(sprite_body, field_args, column_args, part_args, glow, hpt_body);
 	// Draw the bottom cap
-	float overlap_hack = 1.0f;
-	part_args.y_top = y_tail + overlap_hack;
-	part_args.y_bottom = tail_plus_bottom + overlap_hack;
+	part_args.y_top = y_tail;
+	part_args.y_bottom = tail_plus_bottom;
 	part_args.top_beat = bottom_beat;
-	part_args.y_start_pos = fmaxf(part_args.y_start_pos, y_head);
+	part_args.y_start_pos = fmax(part_args.y_start_pos, y_head);
 	part_args.wrapping = false;
 	DrawHoldPart(sprite_bottom, field_args, column_args, part_args, glow, hpt_bottom);
 }
