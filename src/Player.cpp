@@ -2864,19 +2864,8 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 
 void Player::HandleTapRowScore( unsigned row )
 {
-	bool bNoCheating = true;
-#ifdef DEBUG
-	bNoCheating = false;
-#endif
-
 	// Do not score rows in WarpSegments or FakeSegments
 	if (!m_Timing->IsJudgableAtRow(row))
-		return;
-
-	if( GAMESTATE->m_bDemonstrationOrJukebox )
-		bNoCheating = false;
-	// don't accumulate points if AutoPlay is on.
-	if( bNoCheating && m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
 		return;
 
 	TapNoteScore scoreOfLastTap = NoteDataWithScoring::LastTapNoteWithResult(m_NoteData, row).result.tns;
