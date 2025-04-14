@@ -88,18 +88,18 @@ private:
 	/** @brief Penalty values for Perfect judgments */
 	float 		FlareJudgmentsW2[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, -0.01f};
 	/** @brief Penalty values for Great judgments */
-	float 		FlareJudgmentsW3[10] = {-0.002f, -0.0029f, -0.0038f, -0.0056f, -0.0074f, -0.0092f, -0.0128f, -0.0164f, -0.02f, -0.02f};
+	float 		FlareJudgmentsW3[10] = {-0.001f, -0.001f, -0.001f, -0.0029f, -0.0074f, -0.0092f, -0.0128f, -0.0164f, -0.02f, -0.02f};
 	/** @brief Penalty values for Good judgments */
-	float 		FlareJudgmentsW4[10] = {-0.01f, -0.0145f, -0.019f, -0.028f, -0.038f, -0.045f, -0.064f, -0.082f, -0.1f, -0.1f};
+	float 		FlareJudgmentsW4[10] = {-0.0063f, -0.0063f, -0.0075f, -0.0145f, -0.038f, -0.045f, -0.064f, -0.082f, -0.1f, -0.1f};
 	/** @brief Penalty values for misses */
-	float 		FlareJudgmentsMiss[10] = {-0.10f, -0.11f, -0.12f, -0.14f, -0.16f, -0.18f, -0.22f, -0.26f, -0.3f, -0.3f};
+	float 		FlareJudgmentsMiss[10] = {-0.015f, -0.03f, -0.045f, -0.11f, -0.16f, -0.18f, -0.22f, -0.26f, -0.3f, -0.3f};
 
 	/** @brief Penalty values for OKs */
 	float 		FlareJudgmentsHeld[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	/** @brief Penalty values for missed holds, not used as the Miss penalty applies here. */
 	float 		FlareJudgmentsMissed[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	/** @brief Penalty values for NGs */
-	float 		FlareJudgmentsLetGo[10] = {-0.10f, -0.11f, -0.12f, -0.14f, -0.16f, -0.18f, -0.22f, -0.26f, -0.3f, -0.3f};
+	float 		FlareJudgmentsLetGo[10] = {-0.015f, -0.03f, -0.045f, -0.11f, -0.16f, -0.18f, -0.22f, -0.26f, -0.3f, -0.3f};
 };
 
 #endif
