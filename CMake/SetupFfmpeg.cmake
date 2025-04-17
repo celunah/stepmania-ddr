@@ -5,7 +5,7 @@ if(CMAKE_GENERATOR MATCHES "Ninja")
     )
 endif()
 
-set(SM_FFMPEG_VERSION "2.1.3")
+set(SM_FFMPEG_VERSION "5.1.6")
 set(SM_FFMPEG_SRC_LIST
     "${SM_EXTERN_DIR}"
     "/ffmpeg-linux-"
@@ -23,14 +23,23 @@ if(MINGW)
 endif()
 list(APPEND FFMPEG_CONFIGURE
             "${SM_FFMPEG_CONFIGURE_EXE}"
-            "--disable-programs"
-            "--disable-doc"
+            "--disable-autodetect"
             "--disable-avdevice"
-            "--disable-swresample"
-            "--disable-postproc"
             "--disable-avfilter"
-            "--disable-shared"
-            "--enable-static")
+            "--disable-devices"
+            "--disable-doc"
+            "--disable-filters"
+            "--disable-lzma"
+            "--disable-network"
+            "--disable-postproc"
+            "--disable-programs"
+            "--disable-swresample"
+            "--disable-vaapi"
+            "--disable-bzlib"
+            "--enable-pthreads"
+            "--enable-static"
+            "--enable-zlib"
+            "--prefix=/")
 
 if(CMAKE_POSITION_INDEPENDENT_CODE)
   list(APPEND FFMPEG_CONFIGURE "--enable-pic")
@@ -88,7 +97,7 @@ else()
                       "n${SM_FFMPEG_VERSION}"
                       "--depth"
                       "1"
-                      "https://github.com/stepmania/ffmpeg.git"
+                      "https://github.com/ffmpeg/ffmpeg.git"
                       "${SM_FFMPEG_SRC_DIR}"
                       CONFIGURE_COMMAND
                       "${FFMPEG_CONFIGURE}"
