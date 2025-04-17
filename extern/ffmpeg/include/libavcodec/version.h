@@ -1,5 +1,4 @@
 /*
- *
  * This file is part of FFmpeg.
  *
  * FFmpeg is free software; you can redistribute it and/or
@@ -26,11 +25,12 @@
  * Libavcodec version macros.
  */
 
-#include "libavutil/avutil.h"
+#include "libavutil/version.h"
 
-#define LIBAVCODEC_VERSION_MAJOR 55
-#define LIBAVCODEC_VERSION_MINOR  39
-#define LIBAVCODEC_VERSION_MICRO 101
+#include "version_major.h"
+
+#define LIBAVCODEC_VERSION_MINOR  37
+#define LIBAVCODEC_VERSION_MICRO 100
 
 #define LIBAVCODEC_VERSION_INT  AV_VERSION_INT(LIBAVCODEC_VERSION_MAJOR, \
                                                LIBAVCODEC_VERSION_MINOR, \
@@ -41,64 +41,5 @@
 #define LIBAVCODEC_BUILD        LIBAVCODEC_VERSION_INT
 
 #define LIBAVCODEC_IDENT        "Lavc" AV_STRINGIFY(LIBAVCODEC_VERSION)
-
-/**
- * FF_API_* defines may be placed below to indicate public API that will be
- * dropped at a future version bump. The defines themselves are not part of
- * the public API and may change, break or disappear at any time.
- */
-
-#ifndef FF_API_REQUEST_CHANNELS
-#define FF_API_REQUEST_CHANNELS (LIBAVCODEC_VERSION_MAJOR < 56)
-#endif
-#ifndef FF_API_ALLOC_CONTEXT
-#define FF_API_ALLOC_CONTEXT    (LIBAVCODEC_VERSION_MAJOR < 55)
-#endif
-#ifndef FF_API_AVCODEC_OPEN
-#define FF_API_AVCODEC_OPEN     (LIBAVCODEC_VERSION_MAJOR < 55)
-#endif
-#ifndef FF_API_OLD_DECODE_AUDIO
-#define FF_API_OLD_DECODE_AUDIO (LIBAVCODEC_VERSION_MAJOR < 56)
-#endif
-#ifndef FF_API_OLD_TIMECODE
-#define FF_API_OLD_TIMECODE (LIBAVCODEC_VERSION_MAJOR < 55)
-#endif
-
-#ifndef FF_API_OLD_ENCODE_AUDIO
-#define FF_API_OLD_ENCODE_AUDIO (LIBAVCODEC_VERSION_MAJOR < 56)
-#endif
-#ifndef FF_API_OLD_ENCODE_VIDEO
-#define FF_API_OLD_ENCODE_VIDEO (LIBAVCODEC_VERSION_MAJOR < 56)
-#endif
-#ifndef FF_API_CODEC_ID
-#define FF_API_CODEC_ID          (LIBAVCODEC_VERSION_MAJOR < 56)
-#endif
-#ifndef FF_API_AVCODEC_RESAMPLE
-#define FF_API_AVCODEC_RESAMPLE  (LIBAVCODEC_VERSION_MAJOR < 56)
-#endif
-#ifndef FF_API_DEINTERLACE
-#define FF_API_DEINTERLACE       (LIBAVCODEC_VERSION_MAJOR < 56)
-#endif
-#ifndef FF_API_DESTRUCT_PACKET
-#define FF_API_DESTRUCT_PACKET   (LIBAVCODEC_VERSION_MAJOR < 56)
-#endif
-#ifndef FF_API_GET_BUFFER
-#define FF_API_GET_BUFFER        (LIBAVCODEC_VERSION_MAJOR < 56)
-#endif
-#ifndef FF_API_MISSING_SAMPLE
-#define FF_API_MISSING_SAMPLE    (LIBAVCODEC_VERSION_MAJOR < 56)
-#endif
-#ifndef FF_API_LOWRES
-#define FF_API_LOWRES            (LIBAVCODEC_VERSION_MAJOR < 56)
-#endif
-#ifndef FF_API_CAP_VDPAU
-#define FF_API_CAP_VDPAU         (LIBAVCODEC_VERSION_MAJOR < 56)
-#endif
-#ifndef FF_API_BUFS_VDPAU
-#define FF_API_BUFS_VDPAU        (LIBAVCODEC_VERSION_MAJOR < 56)
-#endif
-#ifndef FF_API_VOXWARE
-#define FF_API_VOXWARE           (LIBAVCODEC_VERSION_MAJOR < 56)
-#endif
 
 #endif /* AVCODEC_VERSION_H */

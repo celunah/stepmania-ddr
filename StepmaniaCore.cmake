@@ -314,10 +314,10 @@ if(WIN32)
     get_filename_component(LIB_AVUTIL ${LIB_AVUTIL} NAME)
 
     list(APPEND SM_FFMPEG_WIN32_DLLS
-      "avcodec-55.dll"
-      "avformat-55.dll"
-      "avutil-52.dll"
-      "swscale-2.dll"
+      "avcodec-59.dll"
+      "avformat-59.dll"
+      "avutil-57.dll"
+      "swscale-6.dll"
     )
     foreach(dll ${SM_FFMPEG_WIN32_DLLS})
       file(REMOVE "${SM_PROGRAM_DIR}/${dll}")

@@ -9,7 +9,8 @@
 
 #include <cerrno>
 
-#if LIBAVCODEC_VERSION_MAJOR < 59
+// FFMpeg 3.3 (libavcodec 57.89.100) renamed this field, deprecated it in 4.x, and removed it in 5.x
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(57, 89, 100)
 #define frame_num frame_number
 #endif
 
@@ -411,7 +412,9 @@ void MovieTexture_FFMpeg::RegisterProtocols()
 		return;
 	Done = true;
 
-#if !FF_API_NEXT
+// These don't exist in FFMpeg 5.x headers anymore.
+// This statement will run only on the original StepMania bundled FFMpeg.
+#if !FF_API_NEXT && LIBAVCODEC_VERSION_MAJOR <= 58
 	avcodec::avcodec_register_all();
 	avcodec::av_register_all();
 #endif
