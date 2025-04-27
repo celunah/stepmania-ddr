@@ -27,7 +27,10 @@
 #define AVUTIL_DISPLAY_H
 
 #include <stdint.h>
+<<<<<<< HEAD:extern/ffmpeg-w32/include/libavutil/display.h
 #include "common.h"
+=======
+>>>>>>> 5_1-new:extern/ffmpeg/include/libavutil/display.h
 
 /**
  * @addtogroup lavu_video

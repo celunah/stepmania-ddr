@@ -31,7 +31,11 @@
 #include "libavutil/samplefmt.h"
 
 #include "libavcodec/codec_id.h"
+<<<<<<< HEAD:extern/ffmpeg-w32/include/libavcodec/codec.h
 #include "libavcodec/version.h"
+=======
+#include "libavcodec/version_major.h"
+>>>>>>> 5_1-new:extern/ffmpeg/include/libavcodec/codec.h
 
 /**
  * @addtogroup lavc_core
@@ -190,12 +194,15 @@ typedef struct AVProfile {
     const char *name; ///< short name for the profile
 } AVProfile;
 
+<<<<<<< HEAD:extern/ffmpeg-w32/include/libavcodec/codec.h
 typedef struct AVCodecDefault AVCodecDefault;
 
 struct AVCodecContext;
 struct AVSubtitle;
 struct AVPacket;
 
+=======
+>>>>>>> 5_1-new:extern/ffmpeg/include/libavcodec/codec.h
 /**
  * AVCodec.
  */
@@ -224,7 +231,17 @@ typedef struct AVCodec {
     const enum AVPixelFormat *pix_fmts;     ///< array of supported pixel formats, or NULL if unknown, array is terminated by -1
     const int *supported_samplerates;       ///< array of supported audio samplerates, or NULL if unknown, array is terminated by 0
     const enum AVSampleFormat *sample_fmts; ///< array of supported sample formats, or NULL if unknown, array is terminated by -1
+<<<<<<< HEAD:extern/ffmpeg-w32/include/libavcodec/codec.h
     const uint64_t *channel_layouts;         ///< array of support channel layouts, or NULL if unknown. array is terminated by 0
+=======
+#if FF_API_OLD_CHANNEL_LAYOUT
+    /**
+     * @deprecated use ch_layouts instead
+     */
+    attribute_deprecated
+    const uint64_t *channel_layouts;         ///< array of support channel layouts, or NULL if unknown. array is terminated by 0
+#endif
+>>>>>>> 5_1-new:extern/ffmpeg/include/libavcodec/codec.h
     const AVClass *priv_class;              ///< AVClass for the private context
     const AVProfile *profiles;              ///< array of recognized profiles, or NULL if unknown, array is terminated by {FF_PROFILE_UNKNOWN}
 
@@ -240,6 +257,7 @@ typedef struct AVCodec {
      */
     const char *wrapper_name;
 
+<<<<<<< HEAD:extern/ffmpeg-w32/include/libavcodec/codec.h
     /*****************************************************************
      * No fields below this line are part of the public API. They
      * may not be used outside of libavcodec and can be changed and
@@ -354,6 +372,12 @@ typedef struct AVCodec {
      * List of supported codec_tags, terminated by FF_CODEC_TAGS_END.
      */
     const uint32_t *codec_tags;
+=======
+    /**
+     * Array of supported channel layouts, terminated with a zeroed layout.
+     */
+    const AVChannelLayout *ch_layouts;
+>>>>>>> 5_1-new:extern/ffmpeg/include/libavcodec/codec.h
 } AVCodec;
 
 /**

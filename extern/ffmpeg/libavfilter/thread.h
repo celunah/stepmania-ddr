@@ -16,6 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+<<<<<<<< HEAD:extern/ffmpeg/libavfilter/thread.h
 #ifndef AVFILTER_THREAD_H
 #define AVFILTER_THREAD_H
 
@@ -26,3 +27,22 @@ int ff_graph_thread_init(AVFilterGraph *graph);
 void ff_graph_thread_free(AVFilterGraph *graph);
 
 #endif /* AVFILTER_THREAD_H */
+========
+#ifndef SWSCALE_VERSION_MAJOR_H
+#define SWSCALE_VERSION_MAJOR_H
+
+/**
+ * @file
+ * swscale version macros
+ */
+
+#define LIBSWSCALE_VERSION_MAJOR   6
+
+/**
+ * FF_API_* defines may be placed below to indicate public API that will be
+ * dropped at a future version bump. The defines themselves are not part of
+ * the public API and may change, break or disappear at any time.
+ */
+
+#endif /* SWSCALE_VERSION_MAJOR_H */
+>>>>>>>> 5_1-new:extern/ffmpeg/libswscale/version_major.h

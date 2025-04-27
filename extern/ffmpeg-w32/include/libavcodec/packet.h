@@ -28,8 +28,14 @@
 #include "libavutil/buffer.h"
 #include "libavutil/dict.h"
 #include "libavutil/rational.h"
+<<<<<<< HEAD:extern/ffmpeg-w32/include/libavcodec/packet.h
 
 #include "libavcodec/version.h"
+=======
+#include "libavutil/version.h"
+
+#include "libavcodec/version_major.h"
+>>>>>>> 5_1-new:extern/ffmpeg/include/libavcodec/packet.h
 
 /**
  * @defgroup lavc_packet AVPacket
@@ -447,8 +453,18 @@ typedef struct AVPacketList {
 #define AV_PKT_FLAG_DISPOSABLE 0x0010
 
 enum AVSideDataParamChangeFlags {
+<<<<<<< HEAD:extern/ffmpeg-w32/include/libavcodec/packet.h
     AV_SIDE_DATA_PARAM_CHANGE_CHANNEL_COUNT  = 0x0001,
     AV_SIDE_DATA_PARAM_CHANGE_CHANNEL_LAYOUT = 0x0002,
+=======
+#if FF_API_OLD_CHANNEL_LAYOUT
+    /**
+     * @deprecated those are not used by any decoder
+     */
+    AV_SIDE_DATA_PARAM_CHANGE_CHANNEL_COUNT  = 0x0001,
+    AV_SIDE_DATA_PARAM_CHANGE_CHANNEL_LAYOUT = 0x0002,
+#endif
+>>>>>>> 5_1-new:extern/ffmpeg/include/libavcodec/packet.h
     AV_SIDE_DATA_PARAM_CHANGE_SAMPLE_RATE    = 0x0004,
     AV_SIDE_DATA_PARAM_CHANGE_DIMENSIONS     = 0x0008,
 };

@@ -38,6 +38,7 @@ typedef struct AVComplexInt32 {
 
 enum AVTXType {
     /**
+<<<<<<< HEAD:extern/ffmpeg-w32/include/libavutil/tx.h
      * Standard complex to complex FFT with sample data type AVComplexFloat.
      * Output is not 1/len normalized. Scaling currently unsupported.
      * The stride parameter is ignored.
@@ -47,17 +48,41 @@ enum AVTXType {
     /**
      * Standard MDCT with sample data type of float and a scale type of
      * float. Length is the frame size, not the window size (which is 2x frame)
+=======
+     * Standard complex to complex FFT with sample data type of AVComplexFloat,
+     * AVComplexDouble or AVComplexInt32, for each respective variant.
+     *
+     * Output is not 1/len normalized. Scaling currently unsupported.
+     * The stride parameter must be set to the size of a single sample in bytes.
+     */
+    AV_TX_FLOAT_FFT  = 0,
+    AV_TX_DOUBLE_FFT = 2,
+    AV_TX_INT32_FFT  = 4,
+
+    /**
+     * Standard MDCT with a sample data type of float, double or int32_t,
+     * respecively. For the float and int32 variants, the scale type is
+     * 'float', while for the double variant, it's 'double'.
+     * If scale is NULL, 1.0 will be used as a default.
+     *
+     * Length is the frame size, not the window size (which is 2x frame).
+>>>>>>> 5_1-new:extern/ffmpeg/include/libavutil/tx.h
      * For forward transforms, the stride specifies the spacing between each
      * sample in the output array in bytes. The input must be a flat array.
      *
      * For inverse transforms, the stride specifies the spacing between each
+<<<<<<< HEAD:extern/ffmpeg-w32/include/libavutil/tx.h
      * sample in the input array in bytes. The output will be a flat array.
      * Stride must be a non-zero multiple of sizeof(float).
+=======
+     * sample in the input array in bytes. The output must be a flat array.
+>>>>>>> 5_1-new:extern/ffmpeg/include/libavutil/tx.h
      *
      * NOTE: the inverse transform is half-length, meaning the output will not
      * contain redundant data. This is what most codecs work with. To do a full
      * inverse transform, set the AV_TX_FULL_IMDCT flag on init.
      */
+<<<<<<< HEAD:extern/ffmpeg-w32/include/libavutil/tx.h
     AV_TX_FLOAT_MDCT = 1,
 
     /**
@@ -82,6 +107,34 @@ enum AVTXType {
      * Stride must be a non-zero multiple of sizeof(int32_t).
      */
     AV_TX_INT32_MDCT = 5,
+=======
+    AV_TX_FLOAT_MDCT  = 1,
+    AV_TX_DOUBLE_MDCT = 3,
+    AV_TX_INT32_MDCT  = 5,
+
+    /**
+     * Real to complex and complex to real DFTs.
+     * For the float and int32 variants, the scale type is 'float', while for
+     * the double variant, it's a 'double'. If scale is NULL, 1.0 will be used
+     * as a default.
+     *
+     * The stride parameter must be set to the size of a single sample in bytes.
+     *
+     * The forward transform performs a real-to-complex DFT of N samples to
+     * N/2+1 complex values.
+     *
+     * The inverse transform performs a complex-to-real DFT of N/2+1 complex
+     * values to N real samples. The output is not normalized, but can be
+     * made so by setting the scale value to 1.0/len.
+     * NOTE: the inverse transform always overwrites the input.
+     */
+    AV_TX_FLOAT_RDFT  = 6,
+    AV_TX_DOUBLE_RDFT = 7,
+    AV_TX_INT32_RDFT  = 8,
+
+    /* Not part of the API, do not use */
+    AV_TX_NB,
+>>>>>>> 5_1-new:extern/ffmpeg/include/libavutil/tx.h
 };
 
 /**
@@ -145,7 +198,11 @@ int av_tx_init(AVTXContext **ctx, av_tx_fn *tx, enum AVTXType type,
                int inv, int len, const void *scale, uint64_t flags);
 
 /**
+<<<<<<< HEAD:extern/ffmpeg-w32/include/libavutil/tx.h
  * Frees a context and sets ctx to NULL, does nothing when ctx == NULL
+=======
+ * Frees a context and sets *ctx to NULL, does nothing when *ctx == NULL.
+>>>>>>> 5_1-new:extern/ffmpeg/include/libavutil/tx.h
  */
 void av_tx_uninit(AVTXContext **ctx);
 

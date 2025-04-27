@@ -21,7 +21,10 @@
 
 #include <stddef.h>
 #include <stdint.h>
+<<<<<<< HEAD:extern/ffmpeg-w32/include/libavutil/pixelutils.h
 #include "common.h"
+=======
+>>>>>>> 5_1-new:extern/ffmpeg/include/libavutil/pixelutils.h
 
 /**
  * Sum of abs(src1[x] - src2[x])

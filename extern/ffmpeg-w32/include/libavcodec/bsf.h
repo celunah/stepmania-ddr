@@ -30,7 +30,32 @@
 #include "packet.h"
 
 /**
+<<<<<<< HEAD:extern/ffmpeg-w32/include/libavcodec/bsf.h
  * @addtogroup lavc_core
+=======
+ * @defgroup lavc_bsf Bitstream filters
+ * @ingroup libavc
+ *
+ * Bitstream filters transform encoded media data without decoding it. This
+ * allows e.g. manipulating various header values. Bitstream filters operate on
+ * @ref AVPacket "AVPackets".
+ *
+ * The bitstream filtering API is centered around two structures:
+ * AVBitStreamFilter and AVBSFContext. The former represents a bitstream filter
+ * in abstract, the latter a specific filtering process. Obtain an
+ * AVBitStreamFilter using av_bsf_get_by_name() or av_bsf_iterate(), then pass
+ * it to av_bsf_alloc() to create an AVBSFContext. Fill in the user-settable
+ * AVBSFContext fields, as described in its documentation, then call
+ * av_bsf_init() to prepare the filter context for use.
+ *
+ * Submit packets for filtering using av_bsf_send_packet(), obtain filtered
+ * results with av_bsf_receive_packet(). When no more input packets will be
+ * sent, submit a NULL AVPacket to signal the end of the stream to the filter.
+ * av_bsf_receive_packet() will then return trailing packets, if any are
+ * produced by the filter.
+ *
+ * Finally, free the filter context with av_bsf_free().
+>>>>>>> 5_1-new:extern/ffmpeg/include/libavcodec/bsf.h
  * @{
  */
 
@@ -107,6 +132,7 @@ typedef struct AVBitStreamFilter {
      * code to this class.
      */
     const AVClass *priv_class;
+<<<<<<< HEAD:extern/ffmpeg-w32/include/libavcodec/bsf.h
 
     /*****************************************************************
      * No fields below this line are part of the public API. They
@@ -121,6 +147,8 @@ typedef struct AVBitStreamFilter {
     int (*filter)(AVBSFContext *ctx, AVPacket *pkt);
     void (*close)(AVBSFContext *ctx);
     void (*flush)(AVBSFContext *ctx);
+=======
+>>>>>>> 5_1-new:extern/ffmpeg/include/libavcodec/bsf.h
 } AVBitStreamFilter;
 
 /**
@@ -146,9 +174,15 @@ const AVBitStreamFilter *av_bsf_iterate(void **opaque);
  * av_bsf_init() before sending any data to the filter.
  *
  * @param filter the filter for which to allocate an instance.
+<<<<<<< HEAD:extern/ffmpeg-w32/include/libavcodec/bsf.h
  * @param ctx a pointer into which the pointer to the newly-allocated context
  *            will be written. It must be freed with av_bsf_free() after the
  *            filtering is done.
+=======
+ * @param[out] ctx a pointer into which the pointer to the newly-allocated context
+ *                 will be written. It must be freed with av_bsf_free() after the
+ *                 filtering is done.
+>>>>>>> 5_1-new:extern/ffmpeg/include/libavcodec/bsf.h
  *
  * @return 0 on success, a negative AVERROR code on failure
  */
@@ -174,9 +208,17 @@ int av_bsf_init(AVBSFContext *ctx);
  * sending more empty packets does nothing) and will cause the filter to output
  * any packets it may have buffered internally.
  *
+<<<<<<< HEAD:extern/ffmpeg-w32/include/libavcodec/bsf.h
  * @return 0 on success. AVERROR(EAGAIN) if packets need to be retrieved from the
  * filter (using av_bsf_receive_packet()) before new input can be consumed. Another
  * negative AVERROR value if an error occurs.
+=======
+ * @return
+ *  - 0 on success.
+ *  - AVERROR(EAGAIN) if packets need to be retrieved from the filter (using
+ *    av_bsf_receive_packet()) before new input can be consumed.
+ *  - Another negative AVERROR value if an error occurs.
+>>>>>>> 5_1-new:extern/ffmpeg/include/libavcodec/bsf.h
  */
 int av_bsf_send_packet(AVBSFContext *ctx, AVPacket *pkt);
 
@@ -193,10 +235,19 @@ int av_bsf_send_packet(AVBSFContext *ctx, AVPacket *pkt);
  *                 overwritten by the returned data. On failure, pkt is not
  *                 touched.
  *
+<<<<<<< HEAD:extern/ffmpeg-w32/include/libavcodec/bsf.h
  * @return 0 on success. AVERROR(EAGAIN) if more packets need to be sent to the
  * filter (using av_bsf_send_packet()) to get more output. AVERROR_EOF if there
  * will be no further output from the filter. Another negative AVERROR value if
  * an error occurs.
+=======
+ * @return
+ *  - 0 on success.
+ *  - AVERROR(EAGAIN) if more packets need to be sent to the filter (using
+ *    av_bsf_send_packet()) to get more output.
+ *  - AVERROR_EOF if there will be no further output from the filter.
+ *  - Another negative AVERROR value if an error occurs.
+>>>>>>> 5_1-new:extern/ffmpeg/include/libavcodec/bsf.h
  *
  * @note one input packet may result in several output packets, so after sending
  * a packet with av_bsf_send_packet(), this function needs to be called
