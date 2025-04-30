@@ -27,6 +27,8 @@ float FindLastDisplayedBeat( const PlayerState* pPlayerState, int iDrawDistanceB
 static ThemeMetric<bool> SHOW_BOARD( "NoteField", "ShowBoard" );
 static ThemeMetric<bool> SHOW_BEAT_BARS_P1( "NoteField", "ShowBeatBarsP1" );
 static ThemeMetric<bool> SHOW_BEAT_BARS_P2( "NoteField", "ShowBeatBarsP2" );
+static ThemeMetric<float> BEAT_BARS_VSHIFT_P1( "NoteField", "BeatBarsVShiftP1" );
+static ThemeMetric<float> BEAT_BARS_VSHIFT_P2( "NoteField", "BeatBarsVShiftP2" );
 static ThemeMetric<float> FADE_BEFORE_TARGETS_PERCENT( "NoteField", "FadeBeforeTargetsPercent" );
 static ThemeMetric<float> BAR_MEASURE_ALPHA( "NoteField", "BarMeasureAlpha" );
 static ThemeMetric<float> BAR_4TH_ALPHA( "NoteField", "Bar4thAlpha" );
@@ -373,9 +375,16 @@ float NoteField::GetWidth() const
 void NoteField::DrawBeatBar( const float fBeat, BeatBarType type, int iMeasureIndex )
 {
 	bool bIsMeasure = type == measure;
+	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+
+	float fShiftPos = 0;
+	if ( pn == PLAYER_1 )
+		fShiftPos = BEAT_BARS_VSHIFT_P1;
+	else if ( pn == PLAYER_2 )
+		fShiftPos = BEAT_BARS_VSHIFT_P2;
 
 	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
-	const float fYPos= ArrowEffects::GetYPos(m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels);
+	const float fYPos= ArrowEffects::GetYPos(m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels) + fShiftPos;
 
 	float fAlpha;
 	int iState;
