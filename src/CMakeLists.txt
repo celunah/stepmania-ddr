@@ -54,20 +54,20 @@ if(NOT APPLE)
 endif()
 
 if(MSVC OR APPLE)
-  set(SM_NAME_RELEASE "StepMania")
-  set(SM_NAME_DEBUG "StepMania-debug")
-  set(SM_NAME_MINSIZEREL "StepMania-min-size")
-  set(SM_NAME_RELWITHDEBINFO "StepMania-release-symbols")
+  set(SM_NAME_RELEASE "OpenDDR")
+  set(SM_NAME_DEBUG "OpenDDR-debug")
+  set(SM_NAME_MINSIZEREL "OpenDDR-min-size")
+  set(SM_NAME_RELWITHDEBINFO "OpenDDR-release-symbols")
 else()
-  set(SM_NAME_RELEASE "stepmania")
-  set(SM_NAME_DEBUG "stepmania-debug")
-  set(SM_NAME_MINSIZEREL "stepmania-min-size")
-  set(SM_NAME_RELWITHDEBINFO "stepmania-release-symbols")
+  set(SM_NAME_RELEASE "openddr")
+  set(SM_NAME_DEBUG "openddr-debug")
+  set(SM_NAME_MINSIZEREL "openddr-min-size")
+  set(SM_NAME_RELWITHDEBINFO "openddr-release-symbols")
 endif()
 
 # Configure generated files here.
 configure_file("${SM_XCODE_DIR}/Info.plist.in.xml"
-               "${SM_XCODE_DIR}/Info.StepMania.plist")
+               "${SM_XCODE_DIR}/Info.OpenDDR.plist")
 configure_file("${SM_XCODE_DIR}/plistHelper.in.hpp"
                "${SM_XCODE_DIR}/plistHelper.hpp")
 
@@ -231,13 +231,13 @@ elseif(APPLE)
       RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO
       "${SM_ROOT_DIR}"
       MACOSX_BUNDLE_INFO_PLIST
-      "${SM_XCODE_DIR}/Info.StepMania.plist"
+      "${SM_XCODE_DIR}/Info.OpenDDR.plist"
       XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD
       "${SM_CPP_STANDARD}"
       XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY
       "libc++"
       XCODE_ATTRIBUTE_INFOPLIST_FILE
-      "${SM_XCODE_DIR}/Info.StepMania.plist"
+      "${SM_XCODE_DIR}/Info.OpenDDR.plist"
       XCODE_ATTRIBUTE_INFOPLIST_PREPROCESS
       "YES"
       XCODE_ATTRIBUTE_INFOPLIST_PREPROCESSOR_DEFINITIONS[variant=Release]
@@ -251,13 +251,13 @@ elseif(APPLE)
       XCODE_ATTRIBUTE_INFOPLIST_PREFIX_HEADER
       "${SM_XCODE_DIR}/plistHelper.hpp"
       XCODE_ATTRIBUTE_GCC_PREFIX_HEADER
-      "${CMAKE_CURRENT_SOURCE_DIR}/archutils/Darwin/StepMania.pch"
+      "${CMAKE_CURRENT_SOURCE_DIR}/archutils/Darwin/OpenDDR.pch"
       XCODE_ATTRIBUTE_GCC_ENABLE_CPP_EXCEPTIONS
       "NO"
       XCODE_ATTRIBUTE_LIBRARY_SEARCH_PATHS
       "${SM_XCODE_DIR}/Libraries")
       # XCODE_ATTRIBUTE_CODE_SIGN_ENTITLEMENTS
-      # "${SM_XCODE_DIR}/StepMania.entitlements")
+      # "${SM_XCODE_DIR}/OpenDDR.entitlements")
       
   set(APPLE_BUNDLE_RESOURCES
     "${SM_ROOT_DIR}/Announcers"
@@ -327,20 +327,20 @@ elseif(APPLE)
                             "${SM_ROOT_DIR}/${SM_APP_RELEASE_NAME}.app" .\; cd
                             ${SM_ROOT_DIR}\; hdiutil create
                             "${SM_DMG_RELEASE_NAME}" -VOLNAME
-                            "StepMania ${SM_DMG_VERSION}" -SRCFOLDER
+                            "OpenDDR ${SM_DMG_VERSION}" -SRCFOLDER
                             "dmgtmpdir/${SM_NAME_VERSION}/" -OV\; rm -fR
                             dmgtmpdir\; popd\;)
 
   # Add the ability to copy the resource file.
   add_custom_command(TARGET "${SM_EXE_NAME}" POST_BUILD
                      COMMAND ${CMAKE_COMMAND} -E make_directory
-                             "$<TARGET_FILE_DIR:StepMania>/../Resources"
+                             "$<TARGET_FILE_DIR:OpenDDR>/../Resources"
                      COMMAND ${CMAKE_COMMAND} -E copy
                              "${SM_XCODE_DIR}/smicon.icns"
-                             "$<TARGET_FILE_DIR:StepMania>/../Resources/"
+                             "$<TARGET_FILE_DIR:OpenDDR>/../Resources/"
                      COMMAND ${CMAKE_COMMAND} -E copy
                              "${SM_XCODE_DIR}/Hardware.plist"
-                             "$<TARGET_FILE_DIR:StepMania>/../Resources/")
+                             "$<TARGET_FILE_DIR:OpenDDR>/../Resources/")
 else() # Linux
   set_target_properties("${SM_EXE_NAME}"
                         PROPERTIES RUNTIME_OUTPUT_DIRECTORY
@@ -534,7 +534,7 @@ if(WIN32)
                         PROPERTIES LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:WINDOWS")
 
 elseif(APPLE)
-  # The following were removed from SMDATA_LINK_LIB to "match" StepMania's
+  # The following were removed from SMDATA_LINK_LIB to "match" OpenDDR's
   # pbxproj. ${MAC_FRAME_APPKIT} ${MAC_FRAME_FOUNDATION} "ffmpeg"
 
   list(INSERT SMDATA_LINK_LIB
@@ -616,7 +616,7 @@ else() # Unix / Linux TODO: Remember to find and locate the zip archive files.
     list(APPEND SMDATA_LINK_LIB ${PULSEAUDIO_LIBRARY})
     # PACKAGE_NAME and PACKAGE_VERSION are only used in this scenario. Why is
     # not clear. TODO: Remove this silliness.
-    sm_add_compile_definition("${SM_EXE_NAME}" PACKAGE_NAME="StepMania")
+    sm_add_compile_definition("${SM_EXE_NAME}" PACKAGE_NAME="OpenDDR")
     set(PACKAGE_VERSION "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}")
     sm_add_compile_definition("${SM_EXE_NAME}"
                               PACKAGE_VERSION="${PACKAGE_VERSION}")
@@ -730,7 +730,7 @@ target_include_directories("${SM_EXE_NAME}" PUBLIC ${SM_INCLUDE_DIRS})
 if(WIN32)
   set(SM_INSTALL_DESTINATION ".")
 else()
-  set(SM_INSTALL_DESTINATION "stepmania-5.1")
+  set(SM_INSTALL_DESTINATION "openddr-5.1")
 endif()
 
 if(NOT APPLE)
@@ -754,7 +754,7 @@ if(NOT APPLE)
             DESTINATION "${SM_FULL_INSTALLATION_PATH}")
     install(FILES "${SM_PROGRAM_DIR}/swscale-2.dll"
             DESTINATION "${SM_FULL_INSTALLATION_PATH}")
-    install(FILES "${SM_PROGRAM_DIR}/StepMania.vdi"
+    install(FILES "${SM_PROGRAM_DIR}/OpenDDR.vdi"
             DESTINATION "${SM_FULL_INSTALLATION_PATH}")
 
     # foreach(SM_WINDOW_DLL "${SM_WINDOWS_PROGRAM_DLLS}") install(FILES
@@ -789,10 +789,10 @@ if(NOT APPLE)
   install(DIRECTORY "${SM_ROOT_DIR}/NoteSkins"
           DESTINATION "${SM_INSTALL_DESTINATION}")
   if(NOT SM_INSTALL_DESTINATION)
-    install(DIRECTORY "${SM_ROOT_DIR}/Songs/StepMania 5" DESTINATION "Songs")
+    install(DIRECTORY "${SM_ROOT_DIR}/Songs/OpenDDR 5" DESTINATION "Songs")
     install(FILES "${SM_ROOT_DIR}/Songs/instructions.txt" DESTINATION "Songs")
   else()
-    install(DIRECTORY "${SM_ROOT_DIR}/Songs/StepMania 5"
+    install(DIRECTORY "${SM_ROOT_DIR}/Songs/OpenDDR 5"
             DESTINATION "${SM_INSTALL_DESTINATION}/Songs")
     install(FILES "${SM_ROOT_DIR}/Songs/instructions.txt"
             DESTINATION "${SM_INSTALL_DESTINATION}/Songs")
