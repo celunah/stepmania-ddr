@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10...4.0)
 
-project(StepMania)
+project(OpenDDR)
 
 include(StepmaniaCore.cmake)
 
