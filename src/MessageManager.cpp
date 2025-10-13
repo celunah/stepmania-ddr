@@ -17,6 +17,7 @@ static const char *MessageIDNames[] = {
 	"CurrentStyleChanged",
 	"PlayModeChanged",
 	"CoinsChanged",
+	"ECreditsChanged",
 	"CurrentSongChanged",
 	"CurrentStepsP1Changed",
 	"CurrentStepsP2Changed",

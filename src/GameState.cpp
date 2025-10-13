@@ -114,6 +114,7 @@ GameState::GameState() :
 	m_pCurGame(				Message_CurrentGameChanged ),
 	m_pCurStyle(			Message_CurrentStyleChanged ),
 	m_PlayMode(				Message_PlayModeChanged ),
+	m_iECredits(			Message_ECreditsChanged ),
 	m_iCoins(				Message_CoinsChanged ),
 	m_sPreferredSongGroup(	Message_PreferredSongGroupChanged ),
 	m_sPreferredCourseGroup(	Message_PreferredCourseGroupChanged ),
@@ -146,6 +147,7 @@ GameState::GameState() :
 
 	m_pCurGame.Set(nullptr);
 	m_iCoins.Set( 0 );
+	m_iECredits.Set( 0 );
 	m_timeGameStarted.SetZero();
 	m_bDemonstrationOrJukebox = false;
 
@@ -506,10 +508,21 @@ namespace
 
 		// subtract coins
 		int iCoinsNeededToJoin = GAMESTATE->GetCoinsNeededToJoin();
+		int iECreditsNeededToJoin = GAMESTATE->GetECreditsNeededToJoin();
 
-		if( GAMESTATE->m_iCoins < iCoinsNeededToJoin )
-			return false;	// not enough coins
+		if( GAMESTATE->m_iCoins < iCoinsNeededToJoin ) { // try e-credits if no credits inserted
+			if( GAMESTATE->m_iECredits < iECreditsNeededToJoin)
+				return false;  // not enough e-credits
 
+			GAMESTATE->m_iECredits.Set( GAMESTATE->m_iECredits - iECreditsNeededToJoin );
+			GAMESTATE->JoinPlayer( pn );
+
+			BOOKKEEPER->WriteECreditsFile(GAMESTATE->m_iECredits.Get());
+
+			return true;
+		}
+
+		// proceed with using credits
 		GAMESTATE->m_iCoins.Set( GAMESTATE->m_iCoins - iCoinsNeededToJoin );
 
 		GAMESTATE->JoinPlayer( pn );
@@ -556,6 +569,21 @@ int GameState::GetCoinsNeededToJoin() const
 		iCoinsToCharge = 0;
 
 	return iCoinsToCharge;
+}
+
+int GameState::GetECreditsNeededToJoin() const
+{
+	int iECreditsToCharge = 0;
+
+	if( GetCoinMode() == CoinMode_Pay )
+		iECreditsToCharge = PREFSMAN->m_iECreditsPerCredit;
+
+	// If joint premium, don't take away a credit for the second join.
+	if( GetPremium() == Premium_2PlayersFor1Credit  &&
+		GetNumSidesJoined() == 1 )
+		iECreditsToCharge = 0;
+
+	return iECreditsToCharge;	
 }
 
 /* Game flow:
@@ -2870,8 +2898,10 @@ public:
 	DEFINE_METHOD( GetLastGameplayDuration, m_DanceDuration )
 	DEFINE_METHOD( GetGameplayLeadIn,		m_bGameplayLeadIn )
 	DEFINE_METHOD( GetCoins,			m_iCoins )
+	DEFINE_METHOD( GetECredits,			m_iECredits )
 	DEFINE_METHOD( IsSideJoined,			m_bSideIsJoined[Enum::Check<PlayerNumber>(L, 1)] )
 	DEFINE_METHOD( GetCoinsNeededToJoin,		GetCoinsNeededToJoin() )
+	DEFINE_METHOD( GetECreditsNeededToJoin,		GetECreditsNeededToJoin() )
 	DEFINE_METHOD( EnoughCreditsToJoin,		EnoughCreditsToJoin() )
 	DEFINE_METHOD( PlayersCanJoin,			PlayersCanJoin() )
 	DEFINE_METHOD( GetNumSidesJoined,		GetNumSidesJoined() )
@@ -3072,6 +3102,17 @@ public:
 		} else {
 			// Warn themers if they attempt to set credits to a negative value.
 			luaL_error( L, "Credits may not be negative." );
+		}
+		COMMON_RETURN_SELF;
+	}
+	static int AddECredits( T* p, lua_State *L )
+	{
+		int numECredits = IArg(1);
+		if (GAMESTATE->m_iECredits + numECredits >= 0)
+		{
+			StepMania::AddECredits(numECredits);
+		} else {
+			luaL_error( L, "E-credits may not be negative.");
 		}
 		COMMON_RETURN_SELF;
 	}
@@ -3373,8 +3414,10 @@ public:
 		ADD_METHOD( GetLastGameplayDuration );
 		ADD_METHOD( GetGameplayLeadIn );
 		ADD_METHOD( GetCoins );
+		ADD_METHOD( GetECredits );
 		ADD_METHOD( IsSideJoined );
 		ADD_METHOD( GetCoinsNeededToJoin );
+		ADD_METHOD( GetECreditsNeededToJoin );
 		ADD_METHOD( EnoughCreditsToJoin );
 		ADD_METHOD( PlayersCanJoin );
 		ADD_METHOD( GetNumSidesJoined );
@@ -3421,6 +3464,7 @@ public:
 		ADD_METHOD( GetExpandedSectionName );
 		ADD_METHOD( AddStageToPlayer );
 		ADD_METHOD( InsertCoin );
+		ADD_METHOD( AddECredits );
 		ADD_METHOD( InsertCredit );
 		ADD_METHOD( CurrentOptionsDisqualifyPlayer );
 		ADD_METHOD( ResetPlayerOptions );

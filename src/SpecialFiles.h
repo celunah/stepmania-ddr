@@ -41,6 +41,7 @@ namespace SpecialFiles
 	extern const RString NOTESKINS_DIR;
 
 	extern const RString COINS_INI;
+	extern const RString ECREDITS_INI;
 
 }
 

@@ -22,7 +22,9 @@ public:
 	void GetCoinsByDayOfWeek( int coins[DAYS_IN_WEEK] ) const;
 	void GetCoinsByHour( int coins[HOURS_IN_DAY] ) const;
 	void WriteCoinsFile( int coins ) ;
+	void WriteECreditsFile( int eCredits ) ;
 	void ReadCoinsFile( int &coins ) ;
+	void ReadECreditsFile( int &eCredits ) ;
 
 
 	void LoadFromNode( const XNode *pNode );

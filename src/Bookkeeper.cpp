@@ -165,11 +165,25 @@ void Bookkeeper::WriteCoinsFile( int coins )
     ini.WriteFile( SpecialFiles::COINS_INI );
 }
 
+void Bookkeeper::WriteECreditsFile( int eCredits )
+{
+	IniFile ini;
+	ini.SetValue( "Bookkeeping", "ECredits", eCredits );
+	ini.WriteFile( SpecialFiles::ECREDITS_INI );
+}
+
 void Bookkeeper::ReadCoinsFile( int &coins )
 {
     IniFile ini;
     ini.ReadFile( SpecialFiles::COINS_INI );
     ini.GetValue( "Bookkeeping", "Coins", coins);
+}
+
+void Bookkeeper::ReadECreditsFile( int &eCredits )
+{
+	IniFile ini;
+	ini.ReadFile( SpecialFiles::ECREDITS_INI );
+	ini.GetValue( "Bookkeeping", "ECredits", eCredits );
 }
 
 // Return the number of coins between [beginning,ending).

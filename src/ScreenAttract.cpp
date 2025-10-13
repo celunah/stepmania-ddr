@@ -83,10 +83,11 @@ bool ScreenAttract::AttractInput( const InputEventPlus &input, ScreenWithMenuEle
 			// fall through
 		case GAME_BUTTON_START:
 		case GAME_BUTTON_COIN:
-			// If we're not in a game and there aren't enough credits to start,
+			// If we're not in a game and there aren't enough credits or e-credits to start,
 			// eat the input and do nothing.
 			if( GAMESTATE->GetCoinMode() == CoinMode_Pay &&
-					GAMESTATE->m_iCoins < PREFSMAN->m_iCoinsPerCredit &&
+				((GAMESTATE->m_iCoins < PREFSMAN->m_iCoinsPerCredit) &&
+				(GAMESTATE->m_iECredits < PREFSMAN->m_iECreditsPerCredit)) &&
 					GAMESTATE->GetNumSidesJoined() == 0 )
 				return true;
 			if( pScreen->IsTransitioning() )

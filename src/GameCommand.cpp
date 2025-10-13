@@ -495,6 +495,16 @@ int GetNumCreditsPaid()
 	return iNumCreditsPaid;
 }
 
+int GetNumECreditsPaid()
+{
+	int iNumECreditsPaid = GAMESTATE->GetNumSidesJoined() * PREFSMAN->m_iECreditsPerCredit;
+
+	if( GAMESTATE->GetPremium() == Premium_2PlayersFor1Credit )
+		iNumECreditsPaid = min( iNumECreditsPaid, static_cast<int>(PREFSMAN->m_iECreditsPerCredit) );
+
+	return iNumECreditsPaid;
+}
+
 
 int GetCreditsRequiredToPlayStyle( const Style *style )
 {
@@ -559,19 +569,22 @@ bool GameCommand::IsPlayable( RString *why ) const
 	if ( m_pStyle )
 	{
 		int iCredits;
-		if( GAMESTATE->GetCoinMode() == CoinMode_Pay )
+		int iECredits;
+		if( GAMESTATE->GetCoinMode() == CoinMode_Pay ) {
 			iCredits = GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit;
-		else
+			iECredits = GAMESTATE->m_iECredits / PREFSMAN->m_iECreditsPerCredit;
+		} else 
 			iCredits = NUM_PLAYERS;
 
 		const int iNumCreditsPaid = GetNumCreditsPaid();
+		const int iNumECreditsPaid = GetNumECreditsPaid();
 		const int iNumCreditsRequired = GetCreditsRequiredToPlayStyle(m_pStyle);
 		
 		/* With PREFSMAN->m_bDelayedCreditsReconcile disabled, enough credits must
 		 * be paid. (This means that enough sides must be joined.)  Enabled, simply
 		 * having enough credits lying in the machine is sufficient; we'll deduct the
 		 * extra in Apply(). */
-		int iNumCreditsAvailable = iNumCreditsPaid;
+		int iNumCreditsAvailable = iNumCreditsPaid + iNumECreditsPaid;
 		if( PREFSMAN->m_bDelayedCreditsReconcile )
 			iNumCreditsAvailable += iCredits;
 

@@ -20,6 +20,7 @@ const RString SpecialFiles::SONGS_DIR = "Songs/";
 const RString SpecialFiles::COURSES_DIR	= "Courses/";
 const RString SpecialFiles::NOTESKINS_DIR = "NoteSkins/";
 const RString SpecialFiles::COINS_INI = "Save/Coin.ini";
+const RString SpecialFiles::ECREDITS_INI = "Save/ECredits.ini";
 
 
 
