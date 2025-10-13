@@ -21,6 +21,7 @@ namespace StepMania
 	RString SaveScreenshot( RString Dir, bool SaveCompressed, bool MakeSignature, RString NamePrefix, RString NameSuffix );
 
 	void InsertCoin( int iNum = 1, bool bCountInBookkeeping = true );
+	void AddECredits( int iNum = 100 );
 	void InsertCredit();
 	void ClearCredits();
 

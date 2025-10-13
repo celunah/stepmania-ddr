@@ -1326,6 +1326,30 @@ void StepMania::InsertCoin( int iNum, bool bCountInBookkeeping )
 	MESSAGEMAN->Broadcast( msg );
 }
 
+void StepMania::AddECredits( int iNum )
+{
+	int iNumECreditsOld = GAMESTATE->m_iECredits;
+
+	if (GAMESTATE->m_iECredits + iNum >= 0)
+	{
+		GAMESTATE->m_iECredits.Set( GAMESTATE->m_iECredits + iNum );
+	}
+
+    int iECredits = GAMESTATE->m_iECredits / PREFSMAN->m_iECreditsPerCredit;
+    bool bMaxCredits = iECredits >= MAX_NUM_CREDITS;
+    if ( bMaxCredits )
+    {
+    	GAMESTATE->m_iECredits.Set( MAX_NUM_CREDITS * PREFSMAN->m_iECreditsPerCredit );
+    }
+
+    LOG->Trace("%i e-credits inserted, %i needed to play", GAMESTATE->m_iECredits.Get(), PREFSMAN->m_iECreditsPerCredit.Get() );
+
+    BOOKKEEPER->WriteECreditsFile(GAMESTATE->m_iECredits.Get());
+
+    Message msg( "ECreditsAdded" );
+    MESSAGEMAN->Broadcast( msg );
+}
+
 void StepMania::InsertCredit()
 {
 	InsertCoin( PREFSMAN->m_iCoinsPerCredit, false );
@@ -1385,6 +1409,14 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 			}
 			StepMania::InsertCoin();
 			return false; // Attract needs to know because it goes to TitleMenu on > 1 credit
+		case GAME_BUTTON_ECREDIT:
+			if( GAMESTATE->IsEditing() )
+			{
+				LOG->Trace( "Ignored e-credit insertion (editing)" );
+				break;
+			}
+			StepMania::AddECredits();
+			return false;
 		default: break;
 	}
 

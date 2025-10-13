@@ -65,6 +65,7 @@ static const AutoMappings g_DefaultKeyMappings = AutoMappings(
 	AutoMappingEntry( 0, KEY_KP_C0,	GAME_BUTTON_SELECT,	true ),
 	AutoMappingEntry( 0, KEY_BACKSLASH,	GAME_BUTTON_BACK,	true ), // laptop keyboards.
 	AutoMappingEntry( 0, KEY_F1,	GAME_BUTTON_COIN,	false ),
+	AutoMappingEntry( 0, KEY_F2,	GAME_BUTTON_ECREDIT,	false ),
 	AutoMappingEntry( 0, KEY_SCRLLOCK,	GAME_BUTTON_OPERATOR,	false )
 );
 
@@ -1205,6 +1206,7 @@ static const InputScheme::GameButtonInfo g_CommonGameButtonInfo[] =
 	{ "Select",	GAME_BUTTON_SELECT },
 	{ "Back",	GAME_BUTTON_BACK },
 	{ "Coin",	GAME_BUTTON_COIN },
+	{ "ECredit",	GAME_BUTTON_ECREDIT },
 	{ "Operator",	GAME_BUTTON_OPERATOR },
 	{ "EffectUp",	GAME_BUTTON_EFFECT_UP },
 	{ "EffectDown",	GAME_BUTTON_EFFECT_DOWN },

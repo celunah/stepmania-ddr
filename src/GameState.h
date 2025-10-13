@@ -108,6 +108,7 @@ public:
 	 * to get one credit, only to have to put in another four coins to get
 	 * the three credits needed to begin the game. */
 	BroadcastOnChange<int>			m_iCoins;
+	BroadcastOnChange<int>			m_iECredits;
 	bool			m_bMultiplayer;
 	int				m_iNumMultiplayerNoteFields;
 	bool DifficultiesLocked() const;
@@ -133,7 +134,8 @@ public:
 	 * @return true if a player can still enter the game, false otherwise. */
 	bool	PlayersCanJoin() const;
 	int 	GetCoinsNeededToJoin() const;
-	bool	EnoughCreditsToJoin() const { return m_iCoins >= GetCoinsNeededToJoin(); }
+	int 	GetECreditsNeededToJoin() const;
+	bool	EnoughCreditsToJoin() const { return (m_iCoins >= GetCoinsNeededToJoin()) || (m_iECredits >= GetECreditsNeededToJoin()); }
 	int		GetNumSidesJoined() const;
 
 	const Game*	GetCurrentGame() const;
