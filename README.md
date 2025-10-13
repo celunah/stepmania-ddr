@@ -24,6 +24,17 @@ Target DDR version: DDR A20 or later
   - Groups of Shock Arrows (4 or 8) will be counted as 1 combo.
 - Arcade Accurate Timers
   - You will have unlimited time to pick choices in game menus when in Event Mode. This does not affect any internal timers.
+- E-credits
+  - You can now create simulations of PASELI (or any other virtual currency for that matter) by using the new methods added in `GAMESTATE`.
+    
+    The following methods were added:
+    * `GAMESTATE:GetECredits()` - get e-credit balance
+    * `GAMESTATE:AddECredits(num)` - add (top up) `num` e-credits
+    * `GAMESTATE:GetECreditsNeededToJoin()` - get the configurable amount of e-credits you need to start a new game
+      
+    You can edit theme metric `ECreditsPerCredit` to change the rate of e-credits needed to start new games.
+    
+    You can press F2 to immediately add 100 e-credits.
  
 ## TODO
 - [ ] Handle O.K. judgments for freeze arrow jumps (Please PR an implementation!)*
