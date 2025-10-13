@@ -17,7 +17,7 @@ set(SM_DOC_DIR "${CMAKE_CURRENT_LIST_DIR}/Docs")
 set(SM_ROOT_DIR "${CMAKE_CURRENT_LIST_DIR}")
 
 # TODO: Reconsile the OS dependent naming scheme.
-set(SM_EXE_NAME "StepMania")
+set(SM_EXE_NAME "OpenDDR")
 
 # Some OS specific helpers.
 if(CMAKE_SYSTEM_NAME MATCHES "Linux")
@@ -488,3 +488,4 @@ configure_file("${SM_SRC_DIR}/verstub.in.cpp"
 
 # Define installer based items for cpack.
 include("${CMAKE_CURRENT_LIST_DIR}/CMake/CPackSetup.cmake")
+
