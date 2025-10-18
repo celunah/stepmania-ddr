@@ -32,7 +32,7 @@ Target DDR version: DDR A20 or later
     * `GAMESTATE:AddECredits(num)` - add (top up) `num` e-credits
     * `GAMESTATE:GetECreditsNeededToJoin()` - get the configurable amount of e-credits you need to start a new game
       
-    You can edit theme metric `ECreditsPerCredit` to change the rate of e-credits needed to start new games.
+    You can edit the preference value `ECreditsPerCredit` to change the rate of e-credits needed to start new games.
     
     You can press F2 to immediately add 100 e-credits.
  
