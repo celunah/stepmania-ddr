@@ -491,16 +491,16 @@ all_test_SOURCES += ../extern/pcre/get.c ../extern/pcre/internal.h ../extern/pcr
 EXTRA_DIST += ../extern/pcre/chartables.c
 endif
 
-Lua = ../extern/lua-5.1/src/lapi.c ../extern/lua-5.1/src/lauxlib.c ../extern/lua-5.1/src/lbaselib.c ../extern/lua-5.1/src/lcode.c ../extern/lua-5.1/src/ldblib.c \
-../extern/lua-5.1/src/ldebug.c ../extern/lua-5.1/src/ldo.c ../extern/lua-5.1/src/ldump.c ../extern/lua-5.1/src/lfunc.c ../extern/lua-5.1/src/lgc.c ../extern/lua-5.1/src/linit.c \
-../extern/lua-5.1/src/liolib.c ../extern/lua-5.1/src/llex.c ../extern/lua-5.1/src/lmathlib.c ../extern/lua-5.1/src/lmem.c ../extern/lua-5.1/src/loadlib.c \
-../extern/lua-5.1/src/lobject.c ../extern/lua-5.1/src/lopcodes.c ../extern/lua-5.1/src/loslib.c ../extern/lua-5.1/src/lparser.c ../extern/lua-5.1/src/lstate.c \
-../extern/lua-5.1/src/lstring.c ../extern/lua-5.1/src/lstrlib.c ../extern/lua-5.1/src/ltable.c ../extern/lua-5.1/src/ltablib.c ../extern/lua-5.1/src/ltm.c \
-../extern/lua-5.1/src/lundump.c ../extern/lua-5.1/src/lvm.c ../extern/lua-5.1/src/lzio.c ../extern/lua-5.1/src/lapi.h ../extern/lua-5.1/src/lauxlib.h ../extern/lua-5.1/src/lcode.h \
-../extern/lua-5.1/src/ldebug.h ../extern/lua-5.1/src/ldo.h ../extern/lua-5.1/src/lfunc.h ../extern/lua-5.1/src/lgc.h ../extern/lua-5.1/src/llex.h ../extern/lua-5.1/src/llimits.h \
-../extern/lua-5.1/src/lmem.h ../extern/lua-5.1/src/lobject.h ../extern/lua-5.1/src/lopcodes.h ../extern/lua-5.1/src/lparser.h ../extern/lua-5.1/src/lstate.h \
-../extern/lua-5.1/src/lstring.h ../extern/lua-5.1/src/ltable.h ../extern/lua-5.1/src/ltm.h ../extern/lua-5.1/src/luaconf.h ../extern/lua-5.1/src/lua.h ../extern/lua-5.1/src/lualib.h \
-../extern/lua-5.1/src/lundump.h ../extern/lua-5.1/src/lvm.h ../extern/lua-5.1/src/lzio.h
+Lua = ../extern/lua-5.5/lapi.c ../extern/lua-5.5/lauxlib.c ../extern/lua-5.5/lbaselib.c ../extern/lua-5.5/lcode.c ../extern/lua-5.5/ldblib.c \
+../extern/lua-5.5/ldebug.c ../extern/lua-5.5/ldo.c ../extern/lua-5.5/ldump.c ../extern/lua-5.5/lfunc.c ../extern/lua-5.5/lgc.c ../extern/lua-5.5/linit.c \
+../extern/lua-5.5/liolib.c ../extern/lua-5.5/llex.c ../extern/lua-5.5/lmathlib.c ../extern/lua-5.5/lmem.c ../extern/lua-5.5/loadlib.c \
+../extern/lua-5.5/lobject.c ../extern/lua-5.5/lopcodes.c ../extern/lua-5.5/loslib.c ../extern/lua-5.5/lparser.c ../extern/lua-5.5/lstate.c \
+../extern/lua-5.5/lstring.c ../extern/lua-5.5/lstrlib.c ../extern/lua-5.5/ltable.c ../extern/lua-5.5/ltablib.c ../extern/lua-5.5/ltm.c \
+../extern/lua-5.5/lundump.c ../extern/lua-5.5/lvm.c ../extern/lua-5.5/lzio.c ../extern/lua-5.5/lapi.h ../extern/lua-5.5/lauxlib.h ../extern/lua-5.5/lcode.h \
+../extern/lua-5.5/ldebug.h ../extern/lua-5.5/ldo.h ../extern/lua-5.5/lfunc.h ../extern/lua-5.5/lgc.h ../extern/lua-5.5/llex.h ../extern/lua-5.5/llimits.h \
+../extern/lua-5.5/lmem.h ../extern/lua-5.5/lobject.h ../extern/lua-5.5/lopcodes.h ../extern/lua-5.5/lparser.h ../extern/lua-5.5/lstate.h \
+../extern/lua-5.5/lstring.h ../extern/lua-5.5/ltable.h ../extern/lua-5.5/ltm.h ../extern/lua-5.5/luaconf.h ../extern/lua-5.5/lua.h ../extern/lua-5.5/lualib.h \
+../extern/lua-5.5/lundump.h ../extern/lua-5.5/lvm.h ../extern/lua-5.5/lzio.h
 
 jsoncpp = ../extern/jsoncpp/jsoncpp.cpp
 
@@ -747,10 +747,10 @@ stepmania_LDADD = $(main_LDADD)
 
 if BUILD_LUA_BINARIES
  noinst_PROGRAMS += lua luac
- lua_SOURCES = $(Lua) ../extern/lua-5.1/src/lua.c
+ lua_SOURCES = $(Lua) ../extern/lua-5.5/lua.c
  lua_LDADD = -lreadline
 
- luac_SOURCES = $(Lua) ../extern/lua-5.1/src/luac.c ../extern/lua-5.1/src/print.c
+ luac_SOURCES = $(Lua) ../extern/lua-5.5/luac.c ../extern/lua-5.5/print.c
  luac_LDADD =
 endif
 

@@ -1,0 +1,3 @@
+[submodule "extern/lua-5.5"]
+	path = extern/lua-5.5
+	url = https://github.com/h-lunah/smlua
