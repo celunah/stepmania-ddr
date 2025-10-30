@@ -25,6 +25,8 @@ jobs:
           libxrandr-dev
           libxtst-dev
           nasm
+      - name: Set up submodules
+        run: git submodule init && git submodule update
       - name: Configure
         run: cmake -B build
       - name: Build
@@ -59,6 +61,8 @@ jobs:
           libxrandr-dev
           libxtst-dev
           ninja-build
+      - name: Set up submodules
+        run: git submodule init && git submodule update
       - name: Configure
         run: cmake -G Ninja -B build
           -DWITH_SYSTEM_FFMPEG=ON
@@ -83,6 +87,8 @@ jobs:
       - name: Install dependencies
         run: brew install
           nasm
+      - name: Set up submodules
+        run: git submodule init && git submodule update
       - name: Configure
         run: cmake -B build
       - name: Build
@@ -93,6 +99,8 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Set up submodules
+        run: git submodule init && git submodule update
       - name: Configure
         run: cmake -B build
       - name: Build
