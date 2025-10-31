@@ -264,6 +264,7 @@ LuaManager::LuaManager()
 	lua_pushcfunction( L, luaopen_table ); lua_call( L, 0, 1 ); lua_setglobal( L, "table" );
 	lua_pushcfunction( L, luaopen_debug ); lua_call( L, 0, 1 ); lua_setglobal( L, "debug" );
 	lua_pushcfunction( L, luaopen_package ); lua_call( L, 0, 1 ); lua_setglobal( L, "package" ); // this one seems safe -shake
+	lua_pushcfunction( L, luaopen_coroutine ); lua_call( L, 0, 1 ); lua_setglobal( L, "coroutine" );
 	lua_pushcfunction( L, luaopen_compat ); lua_call( L, 0, 1 ); lua_setglobal( L, "compat" );
 	// these two can be dangerous. don't use them
 	// (unless you know what you are doing). -aj
