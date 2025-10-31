@@ -258,18 +258,19 @@ LuaManager::LuaManager()
 	lua_atpanic( L, LuaPanic );
 	m_pLuaMain = L;
 
-	lua_pushcfunction( L, luaopen_base ); lua_call( L, 0, 0 );
-	lua_pushcfunction( L, luaopen_math ); lua_call( L, 0, 0 );
-	lua_pushcfunction( L, luaopen_string ); lua_call( L, 0, 0 );
-	lua_pushcfunction( L, luaopen_table ); lua_call( L, 0, 0 );
-	lua_pushcfunction( L, luaopen_debug ); lua_call( L, 0, 0 );
-	lua_pushcfunction( L, luaopen_package ); lua_call( L, 0, 0 ); // this one seems safe -shake
+	lua_pushcfunction( L, luaopen_base ); lua_call( L, 0, 1 ); lua_setglobal( L, "base" );
+	lua_pushcfunction( L, luaopen_math ); lua_call( L, 0, 1 ); lua_setglobal( L, "math" );
+	lua_pushcfunction( L, luaopen_string ); lua_call( L, 0, 1 ); lua_setglobal( L, "string" );
+	lua_pushcfunction( L, luaopen_table ); lua_call( L, 0, 1 ); lua_setglobal( L, "table" );
+	lua_pushcfunction( L, luaopen_debug ); lua_call( L, 0, 1 ); lua_setglobal( L, "debug" );
+	lua_pushcfunction( L, luaopen_package ); lua_call( L, 0, 1 ); lua_setglobal( L, "package" ); // this one seems safe -shake
+	lua_pushcfunction( L, luaopen_compat ); lua_call( L, 0, 1 ); lua_setglobal( L, "compat" );
 	// these two can be dangerous. don't use them
 	// (unless you know what you are doing). -aj
 #define LUA_ENABLE_DANGEROUS_FEATURES 1
 #if LUA_ENABLE_DANGEROUS_FEATURES
-	lua_pushcfunction( L, luaopen_io ); lua_call( L, 0, 0 );
-	lua_pushcfunction( L, luaopen_os ); lua_call( L, 0, 0 );
+	lua_pushcfunction( L, luaopen_io ); lua_call( L, 0, 1 ); lua_setglobal( L, "io" );
+	lua_pushcfunction( L, luaopen_os ); lua_call( L, 0, 1 ); lua_setglobal( L, "os" );
 #endif
 
 	// Store the thread pool in a table on the stack, in the main thread.
