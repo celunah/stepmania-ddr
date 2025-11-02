@@ -1346,7 +1346,7 @@ void StepMania::AddECredits( int iNum )
 
     BOOKKEEPER->WriteECreditsFile(GAMESTATE->m_iECredits.Get());
 
-    Message msg( "ECreditsAdded" );
+    Message msg( "ECreditsChanged" );
     MESSAGEMAN->Broadcast( msg );
 }
 
