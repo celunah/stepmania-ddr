@@ -21,9 +21,11 @@ Debug/
 Release/
 Contents/
 verdata.*
-StepMania-debug
-stepmania-debug
-Xcode/Info.StepMania.plist
+OpenDDR-*
+openddr-*
+OpenDDR
+openddr
+Xcode/Info.OpenDDR.plist
 Xcode/plistHelper.hpp
 src/version_updater/VersionUpdater
 src/generated
