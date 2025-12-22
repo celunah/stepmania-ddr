@@ -77,75 +77,6 @@ double LifeMeterBar::CalculatePenalty(int X) {
 	return ret;
 }
 
-int LifeMeterBar::GetScore(TapNoteScore TNS = TNS_None, HoldNoteScore HNS = HNS_None) {
-	// Early return should return a value
-	if (TNS == TNS_None && HNS == HNS_None)
-		return 0;
-
-	// Define score values
-	constexpr int W1_Points = 1000000;
-	constexpr int W2_Points = 999990;
-	constexpr int W3_Points = 599990;
-	constexpr int W4_Points = 199990;
-
-	// Store judgment only if there's actually a judgment
-	if (TNS != TNS_None || HNS != HNS_None) {
-		allJudgments.push_back(std::make_pair(HNS, TNS));
-	}
-
-	if (allJudgments.size() == 0)
-		return 0; // Prevent division by zero
-
-	// Calculate total score
-	int totalScore = 0;
-
-	// Process all stored judgments instead of just the current one
-	for (const auto& judgment : allJudgments) {
-		HoldNoteScore currHNS = judgment.first;
-		TapNoteScore currTNS = judgment.second;
-
-		// Process tap note scores
-		switch (currTNS) {
-		case TNS_W1:
-			totalScore += W1_Points;
-			break;
-		case TNS_W2:
-			totalScore += W2_Points;
-			break;
-		case TNS_W3:
-			totalScore += W3_Points;
-			break;
-		case TNS_W4:
-			totalScore += W4_Points;
-			break;
-		case TNS_AvoidMine:
-			totalScore += W1_Points;
-			break;
-		case TNS_HitMine:
-			totalScore += 0;
-			break;
-		default:
-			break;
-		}
-
-		// Process hold note scores
-		switch (currHNS) {
-		case HNS_Held:
-			totalScore += W1_Points;
-			break;
-		case HNS_LetGo:
-			totalScore += 0;
-			break;
-		default:
-			break;
-		}
-	}
-
-	// Normalize to max score of 1,000,000 and round to nearest 10
-	int rawScore = totalScore / allJudgments.size();
-	return std::round(rawScore / 10.0) * 10;
-}
-
 LifeMeterBar::LifeMeterBar( PlayerNumber pn )
 {
 	// Performance should be reset upon loading a lifebar
@@ -204,9 +135,6 @@ LifeMeterBar::LifeMeterBar( PlayerNumber pn )
 	m_sprOver->SetName( "Over" );
 	ActorUtil::LoadAllCommandsAndSetXY( m_sprOver, sType );
 	this->AddChild( m_sprOver );
-
-	// The score needs to return to 0 points upon starting a new stage.
-	allJudgments.clear();
 }
 
 LifeMeterBar::~LifeMeterBar()
@@ -759,8 +687,6 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 			fDeltaLife = 0;
 		break;
 	}
-
-	GetScore(score);
 		
 	ChangeLife( fDeltaLife );
 }
@@ -1036,7 +962,6 @@ void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 		FAIL_M(ssprintf("Invalid DrainType: %i", dtype));
 	}
 
-	GetScore(TNS_None, score);
 	ChangeLife( fDeltaLife );
 }
 

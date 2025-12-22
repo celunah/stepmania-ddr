@@ -31,7 +31,6 @@ public:
 	virtual bool IsFailing() const;
 	virtual float GetLife() const { return m_fLifePercentage; }
 	virtual double CalculatePenalty(int X);
-	virtual int GetScore(TapNoteScore TNS, HoldNoteScore HNS);
 
 	void UpdateNonstopLifebar();
 	// this function is solely for HowToPlay
@@ -41,7 +40,6 @@ public:
 	int 		currFloatingFlareIndex = 9;
 
 	vector<double> recentMultipliers;
-	vector<pair<HoldNoteScore, TapNoteScore>> allJudgments;
 
 	void ResetPerformanceAdjustments() {
 		recentMultipliers.clear();
