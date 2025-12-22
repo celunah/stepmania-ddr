@@ -28,6 +28,7 @@ class ScoreKeeperNormal: public ScoreKeeper
 	int	m_iNumTapsAndHolds;
 	int	m_iMaxScoreSoFar; // for nonstop scoring
 	int	m_iPointBonus; // the difference to award at the end
+	int m_iTotalNotes;
 	int m_cur_toasty_combo;
 	int m_cur_toasty_level;
 	int m_next_toasty_at;
@@ -49,10 +50,13 @@ class ScoreKeeperNormal: public ScoreKeeper
 	ThemeMetric<LuaReference> m_toasty_trigger;
 
 	vector<Steps*>	m_apSteps;
+	vector<pair<HoldNoteScore, TapNoteScore>> allJudgments;
 
 	virtual void AddTapScore( TapNoteScore tns );
 	virtual void AddHoldScore( HoldNoteScore hns );
 	virtual void AddTapRowScore( TapNoteScore tns, const NoteData &nd, int iRow );
+
+	virtual int GetSN2Score(TapNoteScore TNS, HoldNoteScore HNS);
 
 	/* Configuration: */
 	/* Score after each tap will be rounded to the nearest m_iRoundTo; 1 to do nothing. */

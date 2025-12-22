@@ -32,6 +32,91 @@ ScoreKeeperNormal::ScoreKeeperNormal( PlayerState *pPlayerState, PlayerStageStat
 {
 }
 
+int ScoreKeeperNormal::GetSN2Score(TapNoteScore TNS = TNS_None, HoldNoteScore HNS = HNS_None) {
+	// Early return should return a value
+	if (TNS == TNS_None && HNS == HNS_None)
+		return 0;
+
+	// Define score values
+	constexpr double W1 = 1.0;
+	constexpr double W2 = 0.99999;
+	constexpr double W3 = 0.59999;
+	constexpr double W4 = 0.19999;
+
+	// Store judgment only if there's actually a judgment
+	if (TNS != TNS_None || HNS != HNS_None) {
+		allJudgments.push_back(std::make_pair(HNS, TNS));
+	}
+
+	// Get max combo
+	Steps* pSteps = GAMESTATE->m_pCurSteps[m_pPlayerState->m_PlayerNumber];
+	ASSERT( pSteps != nullptr );
+
+	// We need to add holds again because freeze arrows are scored as two scoring events.
+	int totalNotes;
+	if (GAMESTATE->IsCourseMode()) {
+		totalNotes = m_iTotalNotes;
+	}
+	else {
+		totalNotes =
+			pSteps->GetRadarValues(m_pPlayerState->m_PlayerNumber)[RadarCategory_TapsAndHolds] +
+			pSteps->GetRadarValues(m_pPlayerState->m_PlayerNumber)[RadarCategory_Holds] +
+			(pSteps->GetRadarValues(m_pPlayerState->m_PlayerNumber)[RadarCategory_Mines] / 4);
+	}
+
+	// Calculate total score
+	double totalScore = 0;
+
+	// Process all stored judgments instead of just the current one
+	for (const auto& judgment : allJudgments) {
+		HoldNoteScore currHNS = judgment.first;
+		TapNoteScore currTNS = judgment.second;
+
+		// Process tap note scores
+		switch (currTNS) {
+		case TNS_W1:
+			totalScore += W1;
+			break;
+		case TNS_W2:
+			totalScore += W2;
+			break;
+		case TNS_W3:
+			totalScore += W3;
+			break;
+		case TNS_W4:
+			totalScore += W4;
+			break;
+		case TNS_Miss:
+			totalScore += 0;
+			break;
+		case TNS_AvoidMine:
+			totalScore += W1;
+			break;
+		case TNS_HitMine:
+			totalScore += 0;
+			break;
+		default:
+			break;
+		}
+
+		// Process hold note scores
+		switch (currHNS) {
+		case HNS_Held:
+			totalScore += W1;
+			break;
+		case HNS_LetGo:
+			totalScore += 0;
+			break;
+		default:
+			break;
+		}
+	}
+
+	// Normalize to max score of 1,000,000 and round to nearest 10
+	double avg = totalScore / totalNotes;
+	return std::round((avg * 1000000.0) / 10.0) * 10;
+}
+
 void ScoreKeeperNormal::Load(
 		const vector<Song*>& apSongs,
 		const vector<Steps*>& apSteps,
@@ -121,6 +206,24 @@ void ScoreKeeperNormal::Load(
 
 	memset( m_ComboBonusFactor, 0, sizeof(m_ComboBonusFactor) );
 	m_iRoundTo = 1;
+	
+	// Get cumulative notes if in a course.
+	if (GAMESTATE->IsCourseMode()) {
+		m_iTotalNotes = 0;
+		for (unsigned i = 0; i < apSteps.size(); i++) {
+			const Steps* pSteps = apSteps[i];
+			if (pSteps) {
+				m_iTotalNotes += pSteps->GetRadarValues(m_pPlayerState->m_PlayerNumber)[RadarCategory_TapsAndHolds] +
+					pSteps->GetRadarValues(m_pPlayerState->m_PlayerNumber)[RadarCategory_Holds] +
+					(pSteps->GetRadarValues(m_pPlayerState->m_PlayerNumber)[RadarCategory_Mines] / 4);
+			}
+		}
+	}
+
+	// Reset scoring only if playing a single song.
+	if (!GAMESTATE->IsCourseMode()) {
+		allJudgments.clear();
+	}
 }
 
 void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps, const NoteData* pNoteData )
@@ -235,7 +338,7 @@ void ScoreKeeperNormal::AddHoldScore( HoldNoteScore hns )
 	if( hns == HNS_Held )
 		AddScoreInternal( TNS_W1 );
 	else if ( hns == HNS_LetGo )
-		AddScoreInternal( TNS_W4 ); // required for subtractive score display to work properly.
+		AddScoreInternal( TNS_Miss ); // N.G. is a miss.
 }
 
 void ScoreKeeperNormal::AddTapRowScore( TapNoteScore score, const NoteData &nd, int iRow )
@@ -262,69 +365,18 @@ void ScoreKeeperNormal::AddScoreInternal( TapNoteScore score )
 	if( m_UseInternalScoring )
 	{
 		unsigned int &iScore = m_pPlayerStageStats->m_iScore;
-		unsigned int &iCurMaxScore = m_pPlayerStageStats->m_iCurMaxScore;
-
-		// See Aaron In Japan for more details about the scoring formulas.
-		// Note: this assumes no custom scoring systems are in use.
-		int p = 0;	// score multiplier
-
-		switch( score )
-		{
-		case TNS_W1:	p = 10;	break;
-		case TNS_W2:	p = GAMESTATE->ShowW1()? 9:10; break;
-		case TNS_W3:	p = 5;	break;
-		default:		p = 0;	break;
-		}
 
 		m_iTapNotesHit++;
-
-		const int64_t N = uint64_t(m_iNumTapsAndHolds);
-		const int64_t sum = (N * (N + 1)) / 2;
-		const int Z = m_iMaxPossiblePoints/10;
 
 		// Don't use a multiplier if the player has failed
 		if( m_pPlayerStageStats->m_bFailed )
 		{
-			iScore += p;
-			// make score evenly divisible by 5
-			// only update this on the next step, to make it less *obvious*
-			/* Round to the nearest 5, instead of always rounding down, so a base score
-			* of 9 will round to 10, not 5. */
-			if (p > 0)
-			iScore = ((iScore+2) / 5) * 5;
+			return;
 		}
 		else
 		{
-			iScore += GetScore(p, Z, sum, m_iTapNotesHit);
-			const int &iCurrentCombo = m_pPlayerStageStats->m_iCurCombo;
-			iScore += m_ComboBonusFactor[score] * iCurrentCombo;
+			iScore = GetSN2Score(score);
 		}
-
-		// Subtract the maximum this step could have been worth from the bonus.
-		m_iPointBonus -= GetScore(10, Z, sum, m_iTapNotesHit);
-		// And add the maximum this step could have been worth to the max score up to now.
-		iCurMaxScore += GetScore(10, Z, sum, m_iTapNotesHit);
-
-		if ( m_iTapNotesHit == m_iNumTapsAndHolds && score >= TNS_W2 )
-		{
-			if( !m_pPlayerStageStats->m_bFailed )
-				iScore += m_iPointBonus;
-			if ( m_bIsLastSongInCourse )
-			{
-				iScore += 1000000 - m_iMaxScoreSoFar;
-				iCurMaxScore += 1000000 - m_iMaxScoreSoFar;
-
-				/* If we're in Endless mode, we'll come around here again, so reset
-				* the bonus counter. */
-				m_iMaxScoreSoFar = 0;
-			}
-			iCurMaxScore += m_iPointBonus;
-		}
-
-		// Undo rounding from the last tap, and re-round.
-		iScore += m_iScoreRemainder;
-		m_iScoreRemainder = (iScore % m_iRoundTo);
-		iScore = iScore - m_iScoreRemainder;
 
 		// LOG->Trace( "score: %i", iScore );
 	}
@@ -403,7 +455,7 @@ void ScoreKeeperNormal::HandleTapScore( const TapNote &tn )
 		}
 
 		// count mine groups (shock arrows) like DDR
-		if( tns == TNS_AvoidMine && m_AvoidMineIncrementsCombo ) {
+		if( tns == TNS_AvoidMine ) {
 			int countEvery = 4;
 			if ( GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_StyleType == StyleType_OnePlayerTwoSides ) {
 				countEvery = 8;
@@ -414,6 +466,7 @@ void ScoreKeeperNormal::HandleTapScore( const TapNote &tn )
 			// Always count combo at half the counting period (4th in single, 4th in double)
 			if (m_iMinesJudged == 4) {
 				HandleComboInternal(1, 0, 0);
+				AddScoreInternal(TNS_W1);
 			}
 
 			// Reset counter when we reach the full count
