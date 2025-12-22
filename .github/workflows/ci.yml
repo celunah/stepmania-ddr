@@ -75,19 +75,6 @@ jobs:
       - name: Build
         run: cmake --build build --parallel "$(nproc)"
 
-  macos-build-bundled:
-    name: "macOS: Build with bundled libraries"
-    runs-on: macos-13
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install dependencies
-        run: brew install
-          nasm
-      - name: Configure
-        run: cmake -B build
-      - name: Build
-        run: cmake --build build --parallel "$(sysctl -n hw.logicalcpu)"
-
   windows-build-bundled:
     name: "Windows: Build with bundled libraries"
     runs-on: windows-latest
