@@ -35,6 +35,8 @@ Target DDR version: DDR A20 or later
     You can edit the preference value `ECreditsPerCredit` to change the rate of e-credits needed to start new games.
     
     You can press F2 to immediately add 100 e-credits.
+- Internal SN2 Scoring
+  - Internal scoring systems in the engine now use the fundamentals of the [DDR SN2 scoring system](https://remywiki.com/DanceDanceRevolution_SuperNOVA2_Scoring_System), instead of using the MAX-style scoring.
  
 ## TODO
 - [ ] Handle O.K. judgments for freeze arrow jumps (Please PR an implementation!)*
