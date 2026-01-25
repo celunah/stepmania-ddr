@@ -508,7 +508,6 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 		fScrollSpeed= curr_options->m_fMaxScrollBPM /
 			(pPlayerState->m_fReadBPM * GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate);
 	}
-	
 	// don't mess with the arrows after they've crossed 0
 	if( fYOffset < 0 )
 	{
@@ -542,8 +541,15 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 		CLAMP( fBrakeYAdjust, BRAKE_MOD_MIN_CLAMP, BRAKE_MOD_MAX_CLAMP );
 		fYAdjust += fBrakeYAdjust;
 	}
-	if( fAccels[PlayerOptions::ACCEL_WAVE] != 0 )
-		fYAdjust +=	fAccels[PlayerOptions::ACCEL_WAVE] * WAVE_MOD_MAGNITUDE *RageFastSin( fYOffset/((fAccels[PlayerOptions::ACCEL_WAVE_PERIOD]*WAVE_MOD_HEIGHT)+WAVE_MOD_HEIGHT) );
+	if ( fAccels[PlayerOptions::ACCEL_WAVE] != 0 ) {
+		float fWaveDur = (curr_options->m_fScrollBPM / 60);
+		CLAMP(fWaveDur, 0.0001f, FLT_MAX);
+		float fSine = RageFastSin(2 * PI * GAMESTATE->m_Position.m_fMusicSecondsVisible / fWaveDur);
+		float fScrollVal = 0.6f + 0.4f * fSine;
+		CLAMP(fScrollVal, 0.2f, 1.0f);
+
+		fScrollSpeed *= fScrollVal;
+	}
 	
 	if( fEffects[PlayerOptions::EFFECT_PARABOLA_Y] != 0 )
 		fYAdjust += fEffects[PlayerOptions::EFFECT_PARABOLA_Y] * (fYOffset/ARROW_SIZE) * (fYOffset/ARROW_SIZE);

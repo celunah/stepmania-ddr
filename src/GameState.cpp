@@ -2023,8 +2023,21 @@ FailType GameState::GetPlayerFailType( const PlayerState *pPlayerState ) const
     LifeType lt = pPlayerState->m_PlayerOptions.GetCurrent().m_LifeType;
 
 	// Don't fail in event mode when using normal gauge types
-	if ( IsEventMode() && dt == DrainType_Normal && lt == LifeType_Bar )
-		return FailType_Off;
+	if (IsEventMode() && dt == DrainType_Normal && lt == LifeType_Bar) {
+		// get current combo
+		int currMissCombo = STATSMAN->m_CurStageStats.m_player[pn].m_iCurMissCombo;
+
+		// how many notes in this song?
+		Steps* currentSteps = m_pCurSteps[pn];
+		int totalNotes = currentSteps->GetRadarValues(pn)[RadarCategory_TapsAndHolds] +
+			currentSteps->GetRadarValues(pn)[RadarCategory_Holds];
+
+		// fail if miss combo exceeds 30% of total notes
+		if (currMissCombo >= static_cast<int>(totalNotes * 0.3))
+			return FailType_Immediate;
+		else
+			return FailType_Off;
+	}
 
 	// LIFE4 and RISKY mean an immediate failure when no lives are left.
 	if ( lt == LifeType_Battery )
