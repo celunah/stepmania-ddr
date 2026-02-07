@@ -40,7 +40,7 @@ Target DDR version: DDR A20 or later
  
 ## TODO
 - [ ] Handle O.K. judgments for freeze arrow jumps (Please PR an implementation!)*
-- [ ] Arcade Accurate Modifiers (Speed, Boost/Brake/Wave)
+- [x] Arcade Accurate Modifiers (Speed, Boost/Brake/Wave)
 
 <sub><sup>It is possible to implement this in Lua.</sup></sub>
 
